@@ -32,10 +32,12 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public String login(String code) {
         //1 拿着code进行远程调用，返回用户id
-        Result<Long> loginResult = client.login(code);
+        //Result<Long> loginResult = client.login(code);
+        // 自定义Feign结果解析，避免了校验200和用户id不为空
+        Long customerId = client.login(code).getData();
 
         //2 判断如果返回失败了，返回错误提示
-        Integer codeResult = loginResult.getCode();
+        /*Integer codeResult = loginResult.getCode();
         if (codeResult != 200) {
             throw new GuiguException(ResultCodeEnum.DATA_ERROR);
         }
@@ -46,7 +48,7 @@ public class CustomerServiceImpl implements CustomerService {
         //4 判断返回用户id是否为空，如果为空，返回错误提示
         if (customerId == null) {
             throw new GuiguException(ResultCodeEnum.DATA_ERROR);
-        }
+        }*/
 
         //5 生成token字符串
         String token = UUID.randomUUID().toString().replaceAll("-", "");
@@ -75,17 +77,19 @@ public class CustomerServiceImpl implements CustomerService {
         }*/
 
         //3 根据用户id进行远程调用 得到用户信息
-        Result<CustomerLoginVo> customerLoginVoResult = client.getCustomerLoginInfo(customerId);
+        //Result<CustomerLoginVo> customerLoginVoResult = client.getCustomerLoginInfo(customerId);
+        // 自定义Feign结果解析，避免了校验200和用户id不为空
+        CustomerLoginVo customerLoginVo = client.getCustomerLoginInfo(customerId).getData();
 
         //4 返回用户信息
-        if (customerLoginVoResult.getCode() != 200){
+        /*if (customerLoginVoResult.getCode() != 200){
             throw new GuiguException(ResultCodeEnum.DATA_ERROR);
         }
 
         CustomerLoginVo customerLoginVo = customerLoginVoResult.getData();
         if (customerLoginVo == null) {
             throw new GuiguException(ResultCodeEnum.DATA_ERROR);
-        }
+        }*/
 
         return customerLoginVo;
     }
