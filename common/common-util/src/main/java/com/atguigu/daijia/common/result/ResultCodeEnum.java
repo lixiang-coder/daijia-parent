@@ -4,7 +4,6 @@ import lombok.Getter;
 
 /**
  * 统一返回结果状态信息类
- *
  */
 @Getter
 public enum ResultCodeEnum {
