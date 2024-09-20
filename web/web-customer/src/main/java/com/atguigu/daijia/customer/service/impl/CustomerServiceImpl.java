@@ -6,10 +6,12 @@ import com.atguigu.daijia.common.result.Result;
 import com.atguigu.daijia.common.result.ResultCodeEnum;
 import com.atguigu.daijia.customer.client.CustomerInfoFeignClient;
 import com.atguigu.daijia.customer.service.CustomerService;
+import com.atguigu.daijia.model.vo.customer.CustomerLoginVo;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -58,5 +60,32 @@ public class CustomerServiceImpl implements CustomerService {
 
         //7 返回token
         return token;
+    }
+
+    //获取客户登录的信息
+    @Override
+    public CustomerLoginVo getCustomerLoginInfo(String token) {
+        //1 根据token查询redis
+        String customerId = (String) redisTemplate.opsForValue().get(RedisConstant.USER_LOGIN_KEY_PREFIX + token);
+
+        //2 查询token在redis中对应的用户id
+        if (!StringUtils.hasText(customerId)) {
+            throw new GuiguException(ResultCodeEnum.DATA_ERROR);
+        }
+
+        //3 根据用户id进行远程调用 得到用户信息
+        Result<CustomerLoginVo> customerLoginVoResult = client.getCustomerLoginInfo(Long.parseLong(customerId));
+
+        //4 返回用户信息
+        if (customerLoginVoResult.getCode() != 200){
+            throw new GuiguException(ResultCodeEnum.DATA_ERROR);
+        }
+
+        CustomerLoginVo customerLoginVo = customerLoginVoResult.getData();
+        if (customerLoginVo == null) {
+            throw new GuiguException(ResultCodeEnum.DATA_ERROR);
+        }
+
+        return customerLoginVo;
     }
 }

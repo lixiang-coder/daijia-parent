@@ -2,17 +2,23 @@ package com.atguigu.daijia.customer.service.impl;
 
 import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
+import com.atguigu.daijia.common.execption.GuiguException;
+import com.atguigu.daijia.common.result.ResultCodeEnum;
 import com.atguigu.daijia.customer.mapper.CustomerInfoMapper;
 import com.atguigu.daijia.customer.mapper.CustomerLoginLogMapper;
 import com.atguigu.daijia.customer.service.CustomerInfoService;
 import com.atguigu.daijia.model.entity.customer.CustomerInfo;
 import com.atguigu.daijia.model.entity.customer.CustomerLoginLog;
+import com.atguigu.daijia.model.vo.customer.CustomerInfoVo;
+import com.atguigu.daijia.model.vo.customer.CustomerLoginVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Slf4j
 @Service
@@ -63,5 +69,30 @@ public class CustomerInfoServiceImpl extends ServiceImpl<CustomerInfoMapper, Cus
 
         //5 返回用户id
         return customerInfo.getId();
+    }
+
+    //获取客户登录信息
+    @Override
+    public CustomerLoginVo getCustomerLoginInfo(Long customerId) {
+        //1 判断customerId参数是否合法
+        if (customerId == null) {
+            throw new GuiguException(ResultCodeEnum.DATA_ERROR);
+        }
+        //2 根据用户id查询用户信息
+        //select * from customer_info ci where ci.customerId = ''
+        CustomerInfo customerInfo = customerInfoMapper.selectById(customerId);
+
+        //3 封装到CustomerLoginVo
+        CustomerLoginVo customerLoginVo = new CustomerLoginVo();
+        BeanUtils.copyProperties(customerInfo,customerLoginVo);
+
+        // CustomerLoginVo 中有一个特殊字段isBindPhone，所以要处理一下
+        String phone = customerInfo.getPhone();
+        boolean isBindPhone = StringUtils.hasText(phone);
+        // 有手机号则true，否则反之
+        customerLoginVo.setIsBindPhone(isBindPhone);
+
+        // 返回
+        return customerLoginVo;
     }
 }
