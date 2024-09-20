@@ -1,9 +1,11 @@
 package com.atguigu.daijia.customer.controller;
 
+import com.atguigu.daijia.common.checklogin.XZYLogin;
 import com.atguigu.daijia.common.constant.RedisConstant;
 import com.atguigu.daijia.common.execption.GuiguException;
 import com.atguigu.daijia.common.result.Result;
 import com.atguigu.daijia.common.result.ResultCodeEnum;
+import com.atguigu.daijia.common.util.AuthContextHolder;
 import com.atguigu.daijia.customer.client.CustomerInfoFeignClient;
 import com.atguigu.daijia.customer.service.CustomerService;
 import com.atguigu.daijia.model.vo.customer.CustomerLoginVo;
@@ -38,7 +40,7 @@ public class CustomerController {
         return Result.ok(customerInfoService.login(code));
     }
 
-    @Operation(summary = "获取客户登录信息")
+    /*@Operation(summary = "获取客户登录信息")
     @GetMapping("/getCustomerLoginInfo")
     public Result<CustomerLoginVo> getCustomerLoginInfo(@RequestHeader(value = "token") String token) {
         //1 从请求头中获取token
@@ -46,6 +48,18 @@ public class CustomerController {
 
         // 调用service
         CustomerLoginVo customerLoginVo = customerInfoService.getCustomerLoginInfo(token);
+
+        return Result.ok(customerLoginVo);
+    }*/
+
+    @Operation(summary = "获取客户登录信息")
+    @XZYLogin   //自定义登录校验注解
+    @GetMapping("/getCustomerLoginInfo")
+    public Result<CustomerLoginVo> getCustomerLoginInfo() {
+        // 直接从ThreadLocal里面获取用户id
+        Long customerId = AuthContextHolder.getUserId();
+        // 调用service
+        CustomerLoginVo customerLoginVo = customerInfoService.getCustomerLoginInfo(customerId);
 
         return Result.ok(customerLoginVo);
     }

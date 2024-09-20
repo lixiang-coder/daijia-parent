@@ -64,17 +64,17 @@ public class CustomerServiceImpl implements CustomerService {
 
     //获取客户登录的信息
     @Override
-    public CustomerLoginVo getCustomerLoginInfo(String token) {
+    public CustomerLoginVo getCustomerLoginInfo(Long customerId) {
         //1 根据token查询redis
-        String customerId = (String) redisTemplate.opsForValue().get(RedisConstant.USER_LOGIN_KEY_PREFIX + token);
+        //String customerId = (String) redisTemplate.opsForValue().get(RedisConstant.USER_LOGIN_KEY_PREFIX + token);
 
         //2 查询token在redis中对应的用户id
-        if (!StringUtils.hasText(customerId)) {
+        /*if (!StringUtils.hasText(customerId)) {
             throw new GuiguException(ResultCodeEnum.DATA_ERROR);
-        }
+        }*/
 
         //3 根据用户id进行远程调用 得到用户信息
-        Result<CustomerLoginVo> customerLoginVoResult = client.getCustomerLoginInfo(Long.parseLong(customerId));
+        Result<CustomerLoginVo> customerLoginVoResult = client.getCustomerLoginInfo(customerId);
 
         //4 返回用户信息
         if (customerLoginVoResult.getCode() != 200){
