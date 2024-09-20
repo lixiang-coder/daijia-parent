@@ -46,14 +46,13 @@ public class CustomerInfoServiceImpl extends ServiceImpl<CustomerInfoMapper, Cus
             throw new RuntimeException(e);
         }
 
-        //2 根据openid查询数据库表，判断是否第一次登录
-        //如果openid不存在返回null，如果存在返回一条记录
+        //2 根据openid查询数据库表，判断是否第一次登录。如果openid不存在返回null，如果存在返回一条记录
         //select * from customer_info ci where ci.wx_open_id = ''
         LambdaQueryWrapper<CustomerInfo> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(CustomerInfo::getWxOpenId, openid);
         CustomerInfo customerInfo = customerInfoMapper.selectOne(wrapper);
 
-        //3 如果第一次登录，添加信息到用户表
+        //3 如果第一次登录，添加信息到客户表
         if (customerInfo == null) {
             customerInfo = new CustomerInfo();
             customerInfo.setNickname(String.valueOf(System.currentTimeMillis()));
@@ -65,7 +64,7 @@ public class CustomerInfoServiceImpl extends ServiceImpl<CustomerInfoMapper, Cus
         //4 记录登录日志信息
         CustomerLoginLog customerLoginLog = new CustomerLoginLog();
         customerLoginLog.setCustomerId(customerInfo.getId());
-        customerLoginLog.setMsg("小程序登录");
+        customerLoginLog.setMsg("小程序客户端登录");
         customerLoginLogMapper.insert(customerLoginLog);
 
         //5 返回用户id

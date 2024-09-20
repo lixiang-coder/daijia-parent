@@ -1,9 +1,7 @@
 package com.atguigu.daijia.customer.service.impl;
 
 import com.atguigu.daijia.common.constant.RedisConstant;
-import com.atguigu.daijia.common.execption.GuiguException;
 import com.atguigu.daijia.common.result.Result;
-import com.atguigu.daijia.common.result.ResultCodeEnum;
 import com.atguigu.daijia.customer.client.CustomerInfoFeignClient;
 import com.atguigu.daijia.customer.service.CustomerService;
 import com.atguigu.daijia.model.form.customer.UpdateWxPhoneForm;
@@ -12,7 +10,6 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -33,7 +30,7 @@ public class CustomerServiceImpl implements CustomerService {
     public String login(String code) {
         //1 拿着code进行远程调用，返回用户id
         //Result<Long> loginResult = client.login(code);
-        // 自定义Feign结果解析，避免了校验200和用户id不为空
+        // 自定义Feign结果解析，避免了重复校验200和用户id不为空
         Long customerId = client.login(code).getData();
 
         //2 判断如果返回失败了，返回错误提示
@@ -78,7 +75,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         //3 根据用户id进行远程调用 得到用户信息
         //Result<CustomerLoginVo> customerLoginVoResult = client.getCustomerLoginInfo(customerId);
-        // 自定义Feign结果解析，避免了校验200和用户id不为空
+        // 自定义Feign结果解析，避免了重复校验200和用户id不为空
         CustomerLoginVo customerLoginVo = client.getCustomerLoginInfo(customerId).getData();
 
         //4 返回用户信息
