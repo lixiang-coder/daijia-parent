@@ -3,6 +3,7 @@ package com.atguigu.daijia.driver.service.impl;
 import com.atguigu.daijia.common.constant.RedisConstant;
 import com.atguigu.daijia.driver.client.DriverInfoFeignClient;
 import com.atguigu.daijia.driver.service.DriverService;
+import com.atguigu.daijia.model.vo.driver.DriverLoginVo;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -37,5 +38,12 @@ public class DriverServiceImpl implements DriverService {
                 TimeUnit.SECONDS);
 
         return token;
+    }
+
+    // 获取司机登录信息
+    @Override
+    public DriverLoginVo getDriverLoginInfo(Long driverId) {
+        // 自定义Feign结果解析，避免了重复校验200和用户id不为空
+        return driverInfoFeignClient.getDriverLoginInfo(driverId).getData();
     }
 }

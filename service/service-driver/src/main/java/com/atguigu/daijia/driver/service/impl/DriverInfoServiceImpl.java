@@ -14,12 +14,15 @@ import com.atguigu.daijia.model.entity.driver.DriverAccount;
 import com.atguigu.daijia.model.entity.driver.DriverInfo;
 import com.atguigu.daijia.model.entity.driver.DriverLoginLog;
 import com.atguigu.daijia.model.entity.driver.DriverSet;
+import com.atguigu.daijia.model.vo.driver.DriverLoginVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 
@@ -92,5 +95,31 @@ public class DriverInfoServiceImpl extends ServiceImpl<DriverInfoMapper, DriverI
         } catch (WxErrorException e) {
             throw new GuiguException(ResultCodeEnum.DATA_ERROR);
         }
+    }
+
+    // 获取司机登录信息
+    @Override
+    public DriverLoginVo getDriverInfo(Long driverId) {
+        //1 判断driverId参数是否合法
+        if (driverId == null) {
+            throw new GuiguException(ResultCodeEnum.DATA_ERROR);
+        }
+        //2 根据用户id查询用户信息
+        //select * from driver_info di where di.driverId = ''
+        DriverInfo driverInfo = driverInfoMapper.selectById(driverId);
+
+        //3 封装到 DriverLoginVo
+        DriverLoginVo driverLoginVo = new DriverLoginVo();
+        BeanUtils.copyProperties(driverInfo, driverLoginVo);
+
+        // DriverLoginVo 中有一个特殊字段 isArchiveFace，所以要处理一下
+        String faceModelId = driverInfo.getFaceModelId();   // 只要这个不为空，那就在VO中为true
+
+        boolean isArchiveFace = StringUtils.hasText(faceModelId);
+        // 有手机号则true，否则反之
+        driverLoginVo.setIsArchiveFace(isArchiveFace);
+
+        // 返回
+        return driverLoginVo;
     }
 }
