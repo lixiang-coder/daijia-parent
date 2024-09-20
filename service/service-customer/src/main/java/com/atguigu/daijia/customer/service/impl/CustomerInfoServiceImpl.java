@@ -2,6 +2,7 @@ package com.atguigu.daijia.customer.service.impl;
 
 import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
+import cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo;
 import com.atguigu.daijia.common.execption.GuiguException;
 import com.atguigu.daijia.common.result.ResultCodeEnum;
 import com.atguigu.daijia.customer.mapper.CustomerInfoMapper;
@@ -9,6 +10,7 @@ import com.atguigu.daijia.customer.mapper.CustomerLoginLogMapper;
 import com.atguigu.daijia.customer.service.CustomerInfoService;
 import com.atguigu.daijia.model.entity.customer.CustomerInfo;
 import com.atguigu.daijia.model.entity.customer.CustomerLoginLog;
+import com.atguigu.daijia.model.form.customer.UpdateWxPhoneForm;
 import com.atguigu.daijia.model.vo.customer.CustomerLoginVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -83,7 +85,7 @@ public class CustomerInfoServiceImpl extends ServiceImpl<CustomerInfoMapper, Cus
 
         //3 封装到CustomerLoginVo
         CustomerLoginVo customerLoginVo = new CustomerLoginVo();
-        BeanUtils.copyProperties(customerInfo,customerLoginVo);
+        BeanUtils.copyProperties(customerInfo, customerLoginVo);
 
         // CustomerLoginVo 中有一个特殊字段isBindPhone，所以要处理一下
         String phone = customerInfo.getPhone();
@@ -93,5 +95,25 @@ public class CustomerInfoServiceImpl extends ServiceImpl<CustomerInfoMapper, Cus
 
         // 返回
         return customerLoginVo;
+    }
+
+    //更新客户微信手机号码
+    @Override
+    public Boolean updateWxPhoneNumber(UpdateWxPhoneForm updateWxPhoneForm) {
+        try {
+            // 1.根据code获取微信用户绑定的手机号码
+            WxMaPhoneNumberInfo phoneNoInfo = wxMaService.getUserService().getPhoneNoInfo(updateWxPhoneForm.getCode());
+            String phoneNumber = phoneNoInfo.getPhoneNumber();
+
+            // 2.更新用户的信息
+            CustomerInfo customerInfo = customerInfoMapper.selectById(updateWxPhoneForm.getCustomerId());
+            customerInfo.setPhone(phoneNumber);
+            customerInfoMapper.updateById(customerInfo);
+
+            return true;
+        } catch (WxErrorException e) {
+            throw new GuiguException(ResultCodeEnum.DATA_ERROR);
+        }
+
     }
 }

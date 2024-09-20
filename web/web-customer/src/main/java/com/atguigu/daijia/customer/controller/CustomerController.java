@@ -8,6 +8,7 @@ import com.atguigu.daijia.common.result.ResultCodeEnum;
 import com.atguigu.daijia.common.util.AuthContextHolder;
 import com.atguigu.daijia.customer.client.CustomerInfoFeignClient;
 import com.atguigu.daijia.customer.service.CustomerService;
+import com.atguigu.daijia.model.form.customer.UpdateWxPhoneForm;
 import com.atguigu.daijia.model.vo.customer.CustomerLoginVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -62,6 +63,17 @@ public class CustomerController {
         CustomerLoginVo customerLoginVo = customerInfoService.getCustomerLoginInfo(customerId);
 
         return Result.ok(customerLoginVo);
+    }
+
+    @Operation(summary = "更新客户微信手机号码")
+    @XZYLogin
+    @PostMapping("/updateWxPhone")
+    public Result updateWxPhone(@RequestBody UpdateWxPhoneForm updateWxPhoneForm) {
+        // 直接从ThreadLocal里面获取用户id
+        updateWxPhoneForm.setCustomerId(AuthContextHolder.getUserId());
+        // 注：微信公众号个人版不能获取手机号，直接跳过
+        //customerInfoService.updateWxPhoneNumber(updateWxPhoneForm);
+        return Result.ok(true);
     }
 
 }
