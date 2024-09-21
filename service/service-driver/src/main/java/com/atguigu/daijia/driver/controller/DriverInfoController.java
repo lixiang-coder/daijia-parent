@@ -2,6 +2,7 @@ package com.atguigu.daijia.driver.controller;
 
 import com.atguigu.daijia.common.result.Result;
 import com.atguigu.daijia.driver.service.DriverInfoService;
+import com.atguigu.daijia.model.vo.driver.DriverAuthInfoVo;
 import com.atguigu.daijia.model.vo.driver.DriverLoginVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,6 +34,13 @@ public class DriverInfoController {
     public Result<DriverLoginVo> getDriverInfo(@PathVariable Long driverId) {
         DriverLoginVo driverLoginVo = driverInfoService.getDriverInfo(driverId);
         return Result.ok(driverLoginVo);
+    }
+
+    @Operation(summary = "获取司机认证信息")
+    @GetMapping("/getDriverAuthInfo/{driverId}")
+    public Result<DriverAuthInfoVo> getDriverAuthInfo(@PathVariable Long driverId) {
+        DriverAuthInfoVo driverAuthInfoVo = driverInfoService.getDriverAuthInfo(driverId);
+        return Result.ok(driverAuthInfoVo);
     }
 }
 

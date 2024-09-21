@@ -3,6 +3,7 @@ package com.atguigu.daijia.driver.service.impl;
 import com.atguigu.daijia.common.constant.RedisConstant;
 import com.atguigu.daijia.driver.client.DriverInfoFeignClient;
 import com.atguigu.daijia.driver.service.DriverService;
+import com.atguigu.daijia.model.vo.driver.DriverAuthInfoVo;
 import com.atguigu.daijia.model.vo.driver.DriverLoginVo;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -45,5 +46,13 @@ public class DriverServiceImpl implements DriverService {
     public DriverLoginVo getDriverLoginInfo(Long driverId) {
         // 自定义Feign结果解析，避免了重复校验200和用户id不为空
         return driverInfoFeignClient.getDriverLoginInfo(driverId).getData();
+    }
+
+    // 获取司机认证信息
+    @Override
+    public DriverAuthInfoVo getDriverAuthInfo(Long driverId) {
+        // 自定义Feign结果解析，避免了重复校验200和用户id不为空
+        DriverAuthInfoVo driverAuthInfoVo = driverInfoFeignClient.getDriverAuthInfo(driverId).getData();
+        return driverAuthInfoVo;
     }
 }

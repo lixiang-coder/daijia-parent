@@ -9,11 +9,13 @@ import com.atguigu.daijia.driver.mapper.DriverAccountMapper;
 import com.atguigu.daijia.driver.mapper.DriverInfoMapper;
 import com.atguigu.daijia.driver.mapper.DriverLoginLogMapper;
 import com.atguigu.daijia.driver.mapper.DriverSetMapper;
+import com.atguigu.daijia.driver.service.CosService;
 import com.atguigu.daijia.driver.service.DriverInfoService;
 import com.atguigu.daijia.model.entity.driver.DriverAccount;
 import com.atguigu.daijia.model.entity.driver.DriverInfo;
 import com.atguigu.daijia.model.entity.driver.DriverLoginLog;
 import com.atguigu.daijia.model.entity.driver.DriverSet;
+import com.atguigu.daijia.model.vo.driver.DriverAuthInfoVo;
 import com.atguigu.daijia.model.vo.driver.DriverLoginVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -24,6 +26,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.beans.BeanProperty;
 import java.math.BigDecimal;
 
 @Slf4j
@@ -45,6 +48,9 @@ public class DriverInfoServiceImpl extends ServiceImpl<DriverInfoMapper, DriverI
 
     @Resource
     private DriverAccountMapper driverAccountMapper;
+
+    @Resource
+    private CosService cosService;
 
 
     @Override
@@ -104,8 +110,7 @@ public class DriverInfoServiceImpl extends ServiceImpl<DriverInfoMapper, DriverI
         if (driverId == null) {
             throw new GuiguException(ResultCodeEnum.DATA_ERROR);
         }
-        //2 根据用户id查询用户信息
-        //select * from driver_info di where di.driverId = ''
+        //2 根据司机id查询用户信息。select * from driver_info di where di.driverId = ''
         DriverInfo driverInfo = driverInfoMapper.selectById(driverId);
 
         //3 封装到 DriverLoginVo
@@ -121,5 +126,32 @@ public class DriverInfoServiceImpl extends ServiceImpl<DriverInfoMapper, DriverI
 
         // 返回
         return driverLoginVo;
+    }
+
+    // 获取司机认证信息
+    @Override
+    public DriverAuthInfoVo getDriverAuthInfo(Long driverId) {
+        //1 判断driverId参数是否合法
+        if (driverId == null) {
+            throw new GuiguException(ResultCodeEnum.DATA_ERROR);
+        }
+        //2 根据司机id查询用户信息。select * from driver_info di where di.driverId = ''
+        DriverInfo driverInfo = driverInfoMapper.selectById(driverId);
+        //3 封装到 DriverAuthInfoVo
+        DriverAuthInfoVo driverAuthInfoVo = new DriverAuthInfoVo();
+        BeanUtils.copyProperties(driverInfo, driverAuthInfoVo);
+
+        //4 将DriverInfo中的图片地址(腾讯云的地址)传入，生成一个临时访问的地址(真实的网址)
+        String idcardBackUrl = driverInfo.getIdcardBackUrl();
+        String tempURL = cosService.getImageUrl(idcardBackUrl);
+        driverAuthInfoVo.setIdcardBackShowUrl(tempURL);
+
+        driverAuthInfoVo.setIdcardFrontShowUrl(cosService.getImageUrl(driverAuthInfoVo.getIdcardFrontUrl()));
+        driverAuthInfoVo.setIdcardHandShowUrl(cosService.getImageUrl(driverAuthInfoVo.getIdcardHandUrl()));
+        driverAuthInfoVo.setDriverLicenseFrontShowUrl(cosService.getImageUrl(driverAuthInfoVo.getDriverLicenseFrontUrl()));
+        driverAuthInfoVo.setDriverLicenseBackShowUrl(cosService.getImageUrl(driverAuthInfoVo.getDriverLicenseBackUrl()));
+        driverAuthInfoVo.setDriverLicenseHandShowUrl(cosService.getImageUrl(driverAuthInfoVo.getDriverLicenseHandUrl()));
+
+        return driverAuthInfoVo;
     }
 }
