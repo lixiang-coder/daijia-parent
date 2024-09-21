@@ -1,7 +1,9 @@
 package com.atguigu.daijia.driver.controller;
 
+import com.atguigu.daijia.common.checklogin.XZYLogin;
 import com.atguigu.daijia.common.result.Result;
 import com.atguigu.daijia.driver.service.OcrService;
+import com.atguigu.daijia.model.vo.driver.DriverLicenseOcrVo;
 import com.atguigu.daijia.model.vo.driver.IdCardOcrVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,10 +26,18 @@ public class OcrController {
     private OcrService ocrService;
 
     @Operation(summary = "身份证识别")
+    //@XZYLogin
     @PostMapping("/idCardOcr")
     public Result<IdCardOcrVo> uploadDriverLicenseOcr(@RequestPart("file") MultipartFile file) {
         IdCardOcrVo idCardOcrVo = ocrService.idCardOcr(file);
         return Result.ok(idCardOcrVo);
+    }
+
+    @Operation(summary = "驾驶证识别")
+    //@XZYLogin
+    @PostMapping("/driverLicenseOcr")
+    public Result<DriverLicenseOcrVo> driverLicenseOcr(@RequestPart("file") MultipartFile file) {
+        return Result.ok(ocrService.driverLicenseOcr(file));
     }
 
 }
