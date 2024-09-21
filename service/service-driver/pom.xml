@@ -23,6 +23,11 @@
             <groupId>com.qcloud</groupId>
             <artifactId>cos_api</artifactId>
         </dependency>
+        <!--腾讯云 OCR身份证识别-->
+        <dependency>
+            <groupId>com.tencentcloudapi</groupId>
+            <artifactId>tencentcloud-sdk-java</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

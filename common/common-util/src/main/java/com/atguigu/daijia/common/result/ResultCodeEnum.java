@@ -16,6 +16,7 @@ public enum ResultCodeEnum {
     REPEAT_SUBMIT(206, "重复提交"),
     FEIGN_FAIL(207, "远程调用失败"),
     UPDATE_ERROR(204, "数据更新失败"),
+    AUTHENTICATION_FAILED(210,"认证失败"),
 
     ARGUMENT_VALID_ERROR(210, "参数校验异常"),
     SIGN_ERROR(300, "签名错误"),
