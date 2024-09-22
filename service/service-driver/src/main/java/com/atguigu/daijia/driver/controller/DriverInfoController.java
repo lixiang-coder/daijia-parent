@@ -2,6 +2,7 @@ package com.atguigu.daijia.driver.controller;
 
 import com.atguigu.daijia.common.result.Result;
 import com.atguigu.daijia.driver.service.DriverInfoService;
+import com.atguigu.daijia.model.form.driver.DriverFaceModelForm;
 import com.atguigu.daijia.model.form.driver.UpdateDriverAuthInfoForm;
 import com.atguigu.daijia.model.vo.driver.DriverAuthInfoVo;
 import com.atguigu.daijia.model.vo.driver.DriverLoginVo;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @Tag(name = "司机API接口管理")
 @RestController
-@RequestMapping(value="/driver/info")
+@RequestMapping(value = "/driver/info")
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class DriverInfoController {
 
@@ -41,11 +42,17 @@ public class DriverInfoController {
         return Result.ok(driverAuthInfoVo);
     }
 
-    //更新司机认证信息
     @Operation(summary = "更新司机认证信息")
     @PostMapping("/updateDriverAuthInfo")
     public Result<Boolean> updateDriverAuthInfo(@RequestBody UpdateDriverAuthInfoForm updateDriverAuthInfoForm) {
         Boolean isSuccess = driverInfoService.updateDriverAuthInfo(updateDriverAuthInfoForm);
+        return Result.ok(isSuccess);
+    }
+
+    @Operation(summary = "创建司机人脸模型")
+    @PostMapping("/creatDriverFaceModel")
+    public Result<Boolean> creatDriverFaceModel(@RequestBody DriverFaceModelForm driverFaceModelForm) {
+        Boolean isSuccess = driverInfoService.creatDriverFaceModel(driverFaceModelForm);
         return Result.ok(isSuccess);
     }
 }

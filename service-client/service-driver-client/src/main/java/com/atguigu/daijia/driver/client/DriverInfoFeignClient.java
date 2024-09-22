@@ -1,6 +1,7 @@
 package com.atguigu.daijia.driver.client;
 
 import com.atguigu.daijia.common.result.Result;
+import com.atguigu.daijia.model.form.driver.DriverFaceModelForm;
 import com.atguigu.daijia.model.form.driver.UpdateDriverAuthInfoForm;
 import com.atguigu.daijia.model.vo.driver.DriverAuthInfoVo;
 import com.atguigu.daijia.model.vo.driver.DriverLoginVo;
@@ -39,13 +40,23 @@ public interface DriverInfoFeignClient {
      * @return
      */
     @GetMapping("/driver/info/getDriverAuthInfo/{driverId}")
-    Result<DriverAuthInfoVo> getDriverAuthInfo(@PathVariable Long driverId);
+    Result<DriverAuthInfoVo> getDriverAuthInfo(@PathVariable("driverId") Long driverId);
 
     /**
      * 更新司机认证信息
+     *
      * @param updateDriverAuthInfoForm
      * @return
      */
     @PostMapping("/driver/info/updateDriverAuthInfo")
     Result<Boolean> updateDriverAuthInfo(@RequestBody UpdateDriverAuthInfoForm updateDriverAuthInfoForm);
+
+    /**
+     * 创建司机人脸模型
+     *
+     * @param driverFaceModelForm
+     * @return
+     */
+    @PostMapping("/driver/info/creatDriverFaceModel")
+    Result<Boolean> creatDriverFaceModel(@RequestBody DriverFaceModelForm driverFaceModelForm);
 }

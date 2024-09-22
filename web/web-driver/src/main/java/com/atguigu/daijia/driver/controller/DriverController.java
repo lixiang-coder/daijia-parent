@@ -4,6 +4,7 @@ import com.atguigu.daijia.common.checklogin.XZYLogin;
 import com.atguigu.daijia.common.result.Result;
 import com.atguigu.daijia.common.util.AuthContextHolder;
 import com.atguigu.daijia.driver.service.DriverService;
+import com.atguigu.daijia.model.form.driver.DriverFaceModelForm;
 import com.atguigu.daijia.model.form.driver.UpdateDriverAuthInfoForm;
 import com.atguigu.daijia.model.vo.driver.DriverAuthInfoVo;
 import com.atguigu.daijia.model.vo.driver.DriverLoginVo;
@@ -32,7 +33,7 @@ public class DriverController {
     @Operation(summary = "获取司机登录信息")
     @XZYLogin
     @GetMapping("/getDriverLoginInfo")
-    public Result<DriverLoginVo> getDriverLoginInfo(){
+    public Result<DriverLoginVo> getDriverLoginInfo() {
         Long driverId = AuthContextHolder.getUserId();
         // 调用service
         DriverLoginVo driverLoginVo = driverService.getDriverLoginInfo(driverId);
@@ -57,5 +58,15 @@ public class DriverController {
         Boolean isSuccess = driverService.updateDriverAuthInfo(updateDriverAuthInfoForm);
         return Result.ok(isSuccess);
     }
+
+    @Operation(summary = "创建司机人脸模型")
+    @XZYLogin
+    @PostMapping("/creatDriverFaceModel")
+    public Result<Boolean> creatDriverFaceModel(@RequestBody DriverFaceModelForm driverFaceModelForm) {
+        driverFaceModelForm.setDriverId(AuthContextHolder.getUserId());
+        Boolean isSuccess = driverService.creatDriverFaceModel(driverFaceModelForm);
+        return Result.ok(isSuccess);
+    }
+
 }
 
