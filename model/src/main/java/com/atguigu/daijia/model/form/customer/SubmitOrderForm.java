@@ -17,7 +17,7 @@ public class SubmitOrderForm {
     @Schema(description = "起始地点经度")
     private BigDecimal startPointLongitude;
 
-    @Schema(description = "起始点伟度")
+    @Schema(description = "起始点纬度")
     private BigDecimal startPointLatitude;
 
     @Schema(description = "结束地点")
@@ -26,7 +26,7 @@ public class SubmitOrderForm {
     @Schema(description = "结束地点经度")
     private BigDecimal endPointLongitude;
 
-    @Schema(description = "结束地点经度")
+    @Schema(description = "结束地点纬度")
     private BigDecimal endPointLatitude;
 
     @Schema(description = "顾客好处费")
