@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashMap;
@@ -22,7 +21,7 @@ import java.util.Map;
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class MapServiceImpl implements MapService {
 
-    @Value("tencent.cloud.map")
+    @Value("${tencent.map.key}")
     private String key;
 
     @Resource
