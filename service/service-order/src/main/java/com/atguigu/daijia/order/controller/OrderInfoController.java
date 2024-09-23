@@ -24,5 +24,11 @@ public class OrderInfoController {
         return Result.ok(orderInfoService.saveOrderInfo(orderInfoForm));
     }
 
+    @Operation(summary = "根据订单id获取订单状态")
+    @GetMapping("/getOrderStatus/{orderId}")
+    public Result<Integer> getOrderStatus(@PathVariable Long orderId) {
+        return Result.ok(orderInfoService.getOrderStatus(orderId));
+    }
+
 }
 

@@ -7,6 +7,7 @@ import com.atguigu.daijia.model.form.order.OrderInfoForm;
 import com.atguigu.daijia.order.mapper.OrderInfoMapper;
 import com.atguigu.daijia.order.mapper.OrderStatusLogMapper;
 import com.atguigu.daijia.order.service.OrderInfoService;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
 import org.springframework.beans.BeanUtils;
@@ -40,6 +41,20 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         // 向订单状态日志记录表插入数据
         log(orderInfo.getId(),orderInfo.getStatus());
         return orderInfo.getId();
+    }
+
+    // 根据订单id获取订单状态
+    @Override
+    public Integer getOrderStatus(Long orderId) {
+        LambdaQueryWrapper<OrderInfo> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(OrderInfo::getId, orderId);
+        wrapper.select(OrderInfo::getStatus);
+        OrderInfo orderInfo = orderInfoMapper.selectOne(wrapper);
+        if (orderInfo == null) {
+            //返回null，feign解析会抛出异常，给默认值，后续会用
+            return OrderStatus.NULL_ORDER.getStatus();
+        }
+        return orderInfo.getStatus();
     }
 
     public void log(Long orderId, Integer status) {

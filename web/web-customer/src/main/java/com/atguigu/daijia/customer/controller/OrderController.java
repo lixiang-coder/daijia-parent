@@ -49,5 +49,12 @@ public class OrderController {
         submitOrderForm.setCustomerId(AuthContextHolder.getUserId());
         return Result.ok(orderService.submitOrder(submitOrderForm));
     }
+
+    @Operation(summary = "查询订单状态")
+    @XZYLogin
+    @GetMapping("/getOrderStatus/{orderId}")
+    public Result<Integer> getOrderStatus(@PathVariable Long orderId) {
+        return Result.ok(orderService.getOrderStatus(orderId));
+    }
 }
 
