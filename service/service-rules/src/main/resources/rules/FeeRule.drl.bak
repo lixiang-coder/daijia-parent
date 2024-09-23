@@ -1,0 +1,9 @@
+//package对应的不一定是真正的目录，可以任意写com.abc，同一个包下的drl文件可以相互访问
+package  com.atguigu.daijia
+
+rule "rule_1"
+    when
+       eval(true)
+    then
+        System.out.println("规则成功");
+end
