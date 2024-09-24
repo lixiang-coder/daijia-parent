@@ -67,6 +67,6 @@ public interface DriverInfoFeignClient {
      * @param driverId
      * @return
      */
-    @GetMapping("/getDriverSet/{driverId}")
-    Result<DriverSet> getDriverSet(@PathVariable Long driverId);
+    @GetMapping("/driver/info/getDriverSet/{driverId}")
+    Result<DriverSet> getDriverSet(@PathVariable("driverId") Long driverId);
 }
