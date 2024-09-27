@@ -8,12 +8,15 @@ import com.atguigu.daijia.model.form.customer.ExpectOrderForm;
 import com.atguigu.daijia.model.form.customer.SubmitOrderForm;
 import com.atguigu.daijia.model.vo.customer.ExpectOrderVo;
 import com.atguigu.daijia.model.vo.order.CurrentOrderInfoVo;
+import com.atguigu.daijia.model.vo.order.NewOrderDataVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @Tag(name = "订单API接口管理")
@@ -55,6 +58,14 @@ public class OrderController {
     @GetMapping("/getOrderStatus/{orderId}")
     public Result<Integer> getOrderStatus(@PathVariable Long orderId) {
         return Result.ok(orderService.getOrderStatus(orderId));
+    }
+
+    @Operation(summary = "查询司机新订单数据")
+    @XZYLogin
+    @GetMapping("/findNewOrderQueueData")
+    public Result<List<NewOrderDataVo>> findNewOrderQueueData() {
+        Long driverId = AuthContextHolder.getUserId();
+        return Result.ok(orderService.findNewOrderQueueData(driverId));
     }
 }
 
