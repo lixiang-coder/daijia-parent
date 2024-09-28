@@ -73,4 +73,12 @@ public class DriverServiceImpl implements DriverService {
         Boolean result = driverInfoFeignClient.creatDriverFaceModel(driverFaceModelForm).getData();
         return result;
     }
+
+    // 判断司机当日是否进行过人脸识别
+    @Override
+    public Boolean isFaceRecognition(Long driverId) {
+        // 远程调用
+        Boolean result = driverInfoFeignClient.isFaceRecognition(driverId).getData();
+        return result;
+    }
 }

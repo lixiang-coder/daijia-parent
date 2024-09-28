@@ -68,6 +68,13 @@ public class DriverController {
         return Result.ok(isSuccess);
     }
 
+    @Operation(summary = "判断司机当日是否进行过人脸识别")
+    @XZYLogin
+    @GetMapping("/isFaceRecognition")
+    Result<Boolean> isFaceRecognition() {
+        Long driverId = AuthContextHolder.getUserId();
+        return Result.ok(driverService.isFaceRecognition(driverId));
+    }
 
 
 }

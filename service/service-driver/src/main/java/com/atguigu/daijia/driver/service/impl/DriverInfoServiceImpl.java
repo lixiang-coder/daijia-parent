@@ -6,16 +6,10 @@ import com.atguigu.daijia.common.constant.SystemConstant;
 import com.atguigu.daijia.common.execption.GuiguException;
 import com.atguigu.daijia.common.result.ResultCodeEnum;
 import com.atguigu.daijia.config.TencentCloudProperties;
-import com.atguigu.daijia.driver.mapper.DriverAccountMapper;
-import com.atguigu.daijia.driver.mapper.DriverInfoMapper;
-import com.atguigu.daijia.driver.mapper.DriverLoginLogMapper;
-import com.atguigu.daijia.driver.mapper.DriverSetMapper;
+import com.atguigu.daijia.driver.mapper.*;
 import com.atguigu.daijia.driver.service.CosService;
 import com.atguigu.daijia.driver.service.DriverInfoService;
-import com.atguigu.daijia.model.entity.driver.DriverAccount;
-import com.atguigu.daijia.model.entity.driver.DriverInfo;
-import com.atguigu.daijia.model.entity.driver.DriverLoginLog;
-import com.atguigu.daijia.model.entity.driver.DriverSet;
+import com.atguigu.daijia.model.entity.driver.*;
 import com.atguigu.daijia.model.form.driver.DriverFaceModelForm;
 import com.atguigu.daijia.model.form.driver.UpdateDriverAuthInfoForm;
 import com.atguigu.daijia.model.vo.driver.DriverAuthInfoVo;
@@ -33,6 +27,7 @@ import com.tencentcloudapi.iai.v20180301.models.CreatePersonResponse;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
+import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -64,6 +59,9 @@ public class DriverInfoServiceImpl extends ServiceImpl<DriverInfoMapper, DriverI
 
     @Resource
     private TencentCloudProperties tencentCloudProperties;
+
+    @Resource
+    private DriverFaceRecognitionMapper driverFaceRecognitionMapper;
 
 
     @Override
@@ -235,8 +233,21 @@ public class DriverInfoServiceImpl extends ServiceImpl<DriverInfoMapper, DriverI
     @Override
     public DriverSet getDriverSet(Long driverId) {
         LambdaQueryWrapper<DriverSet> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(DriverSet::getDriverId,driverId);
+        wrapper.eq(DriverSet::getDriverId, driverId);
         DriverSet driverSet = driverSetMapper.selectOne(wrapper);
         return driverSet;
+    }
+
+    // 判断司机当日是否进行过人脸识别
+    @Override
+    public Boolean isFaceRecognition(Long driverId) {
+        // 根据司机id和当日的日期进行查询
+        LambdaQueryWrapper<DriverFaceRecognition> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(DriverFaceRecognition::getDriverId, driverId);
+        // 日期格式：年-月-日
+        wrapper.eq(DriverFaceRecognition::getFaceDate, new DateTime().toString("yyyy-MM-dd"));
+        Long count = driverFaceRecognitionMapper.selectCount(wrapper);
+
+        return count != 0;
     }
 }
