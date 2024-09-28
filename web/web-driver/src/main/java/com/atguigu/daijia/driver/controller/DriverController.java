@@ -77,5 +77,12 @@ public class DriverController {
     }
 
 
+    @Operation(summary = "验证司机人脸")
+    @XZYLogin
+    @PostMapping("/verifyDriverFace")
+    public Result<Boolean> verifyDriverFace(@RequestBody DriverFaceModelForm driverFaceModelForm) {
+        driverFaceModelForm.setDriverId(AuthContextHolder.getUserId());
+        return Result.ok(driverService.verifyDriverFace(driverFaceModelForm));
+    }
 }
 

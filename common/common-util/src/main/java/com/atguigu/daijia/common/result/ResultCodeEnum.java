@@ -40,6 +40,7 @@ public enum ResultCodeEnum {
     DRIVER_END_LOCATION_DISTION_ERROR( 217, "距离代驾终点2公里以内才能确认"),
     IMAGE_AUDITION_FAIL( 217, "图片审核不通过"),
     AUTH_ERROR( 217, "认证通过后才可以开启代驾服务"),
+    FACE_FAIL(250,"人脸验证失败"),
     FACE_ERROR( 250, "当日未进行人脸识别"),
 
     COUPON_EXPIRE( 250, "优惠券已过期"),
