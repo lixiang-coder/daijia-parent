@@ -24,7 +24,6 @@ public interface DriverInfoFeignClient {
     @GetMapping("/driver/info/login/{code}")
     Result<Long> login(@PathVariable String code);
 
-
     /**
      * 获取司机登录信息
      *
@@ -87,4 +86,14 @@ public interface DriverInfoFeignClient {
      */
     @PostMapping("/driver/info/verifyDriverFace")
     Result<Boolean> verifyDriverFace(@RequestBody DriverFaceModelForm driverFaceModelForm);
+
+    /**
+     * 更新司机接单状态
+     *
+     * @param driverId
+     * @param status
+     * @return
+     */
+    @GetMapping("/driver/info/updateServiceStatus/{driverId}/{status}")
+    Result<Boolean> updateServiceStatus(@PathVariable("driverId") Long driverId, @PathVariable("status") Integer status);
 }
