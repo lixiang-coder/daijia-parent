@@ -12,7 +12,6 @@ import com.atguigu.daijia.model.form.rules.FeeRuleRequestForm;
 import com.atguigu.daijia.model.vo.customer.ExpectOrderVo;
 import com.atguigu.daijia.model.vo.dispatch.NewOrderTaskVo;
 import com.atguigu.daijia.model.vo.map.DrivingLineVo;
-import com.atguigu.daijia.model.vo.order.NewOrderDataVo;
 import com.atguigu.daijia.model.vo.rules.FeeRuleResponseVo;
 import com.atguigu.daijia.order.client.OrderInfoFeignClient;
 import com.atguigu.daijia.rules.client.FeeRuleFeignClient;
@@ -22,7 +21,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.List;
 
 @Slf4j
 @Service
@@ -117,10 +115,4 @@ public class OrderServiceImpl implements OrderService {
         return orderInfoFeignClient.getOrderStatus(orderId).getData();
     }
 
-    // 查询司机新订单数据
-    @Override
-    public List<NewOrderDataVo> findNewOrderQueueData(Long driverId) {
-        List<NewOrderDataVo> newOrderDataVoList = newOrderFeignClient.findNewOrderQueueData(driverId).getData();
-        return newOrderDataVoList;
-    }
 }

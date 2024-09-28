@@ -30,7 +30,7 @@ public interface LocationFeignClient {
      * @param driverId
      * @return
      */
-    @DeleteMapping("/removeDriverLocation/{driverId}")
+    @DeleteMapping("/map/location/removeDriverLocation/{driverId}")
     Result<Boolean> removeDriverLocation(@PathVariable Long driverId);
 
     /**

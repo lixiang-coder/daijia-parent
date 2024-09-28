@@ -68,11 +68,10 @@ public class LocationServiceImpl implements LocationService {
         Circle circle = new Circle(point, distance);
 
         //定义GEO参数，设置返回结果包含内容
-        RedisGeoCommands.GeoRadiusCommandArgs args = RedisGeoCommands.GeoRadiusCommandArgs.
-                                                        newGeoRadiusArgs()
-                                                        .includeDistance()  //包含距离
-                                                        .includeCoordinates() //包含坐标
-                                                        .sortAscending(); //升序
+        RedisGeoCommands.GeoRadiusCommandArgs args = RedisGeoCommands.GeoRadiusCommandArgs.newGeoRadiusArgs()
+                .includeDistance()  //包含距离
+                .includeCoordinates() //包含坐标
+                .sortAscending(); //升序
 
         GeoResults<RedisGeoCommands.GeoLocation<String>> result = redisTemplate.opsForGeo().radius(RedisConstant.DRIVER_GEO_LOCATION, circle, args);
 
@@ -121,7 +120,6 @@ public class LocationServiceImpl implements LocationService {
                 list.add(nearByDriverVo);
             }
         }
-
         return list;
     }
 }

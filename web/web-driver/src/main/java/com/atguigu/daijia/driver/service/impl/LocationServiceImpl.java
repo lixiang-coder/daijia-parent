@@ -22,21 +22,21 @@ public class LocationServiceImpl implements LocationService {
     @Resource
     DriverInfoFeignClient driverInfoFeignClient;
 
-
     // 开启接单服务：更新司机经纬度位置
     @Override
     public Boolean updateDriverLocation(UpdateDriverLocationForm updateDriverLocationForm) {
-        // 1.开启接单了才能更新司机接单位置
-        Result<DriverSet> driverSetResult = driverInfoFeignClient.getDriverSet(updateDriverLocationForm.getDriverId());
+        //根据司机id获取司机个性化设置信息
+        Long driverId = updateDriverLocationForm.getDriverId();
+        Result<DriverSet> driverSetResult = driverInfoFeignClient.getDriverSet(driverId);
         DriverSet driverSet = driverSetResult.getData();
-        Integer serviceStatus = driverSet.getServiceStatus();
-        // 判断司机有没有开始接单
-        if (serviceStatus == null || serviceStatus != 1){
+
+        //判断：如果司机开始接单，更新位置信息
+        if (driverSet.getServiceStatus() == 1) {
+            Result<Boolean> booleanResult = locationFeignClient.updateDriverLocation(updateDriverLocationForm);
+            return booleanResult.getData();
+        } else {
+            //没有接单
             throw new GuiguException(ResultCodeEnum.NO_START_SERVICE);
         }
-
-        // 2.远程调用
-        Result<Boolean> booleanResult = locationFeignClient.updateDriverLocation(updateDriverLocationForm);
-        return booleanResult.getData();
     }
 }
