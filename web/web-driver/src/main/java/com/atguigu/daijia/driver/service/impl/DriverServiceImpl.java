@@ -1,8 +1,12 @@
 package com.atguigu.daijia.driver.service.impl;
 
 import com.atguigu.daijia.common.constant.RedisConstant;
+import com.atguigu.daijia.common.execption.GuiguException;
+import com.atguigu.daijia.common.result.ResultCodeEnum;
+import com.atguigu.daijia.dispatch.client.NewOrderFeignClient;
 import com.atguigu.daijia.driver.client.DriverInfoFeignClient;
 import com.atguigu.daijia.driver.service.DriverService;
+import com.atguigu.daijia.map.client.LocationFeignClient;
 import com.atguigu.daijia.model.form.driver.DriverFaceModelForm;
 import com.atguigu.daijia.model.form.driver.UpdateDriverAuthInfoForm;
 import com.atguigu.daijia.model.vo.driver.DriverAuthInfoVo;
@@ -24,6 +28,12 @@ public class DriverServiceImpl implements DriverService {
 
     @Resource
     private RedisTemplate redisTemplate;
+
+    @Resource
+    private LocationFeignClient locationFeignClient;
+
+    @Resource
+    private NewOrderFeignClient newOrderFeignClient;
 
 
     @Override
@@ -87,5 +97,32 @@ public class DriverServiceImpl implements DriverService {
     public Boolean verifyDriverFace(DriverFaceModelForm driverFaceModelForm) {
         Boolean result = driverInfoFeignClient.verifyDriverFace(driverFaceModelForm).getData();
         return result;
+    }
+
+    // 开始接单服务
+    @Override
+    public Boolean startService(Long driverId) {
+        // 1.判断完成认证
+        DriverLoginVo driverLoginVo = driverInfoFeignClient.getDriverLoginInfo(driverId).getData();
+        if (driverLoginVo.getAuthStatus() != 2) {
+            throw new GuiguException(ResultCodeEnum.AUTH_ERROR);
+        }
+
+        // 2.判断当日是否人脸识别
+        Boolean isFace = driverInfoFeignClient.isFaceRecognition(driverId).getData();
+        if (!isFace) {
+            throw new GuiguException(ResultCodeEnum.FACE_ERROR);
+        }
+
+        // 3.更新司机接单状态
+        driverInfoFeignClient.updateServiceStatus(driverId, 1).getData();
+
+        // 4.删除redis司机位置信息
+        locationFeignClient.removeDriverLocation(driverId);
+
+        // 5.清空司机临时队列数据
+        newOrderFeignClient.clearNewOrderQueueData(driverId);
+
+        return true;
     }
 }

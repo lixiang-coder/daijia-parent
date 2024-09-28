@@ -33,7 +33,6 @@ public interface LocationFeignClient {
     @DeleteMapping("/removeDriverLocation/{driverId}")
     Result<Boolean> removeDriverLocation(@PathVariable Long driverId);
 
-
     /**
      * 搜索附近满足条件的司机
      *

@@ -76,13 +76,20 @@ public class DriverController {
         return Result.ok(driverService.isFaceRecognition(driverId));
     }
 
-
     @Operation(summary = "验证司机人脸")
     @XZYLogin
     @PostMapping("/verifyDriverFace")
     public Result<Boolean> verifyDriverFace(@RequestBody DriverFaceModelForm driverFaceModelForm) {
         driverFaceModelForm.setDriverId(AuthContextHolder.getUserId());
         return Result.ok(driverService.verifyDriverFace(driverFaceModelForm));
+    }
+
+    @Operation(summary = "开始接单服务")
+    @XZYLogin
+    @GetMapping("/startService")
+    public Result<Boolean> startService() {
+        Long driverId = AuthContextHolder.getUserId();
+        return Result.ok(driverService.startService(driverId));
     }
 }
 
