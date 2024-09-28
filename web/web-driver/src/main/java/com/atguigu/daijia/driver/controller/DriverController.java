@@ -91,5 +91,13 @@ public class DriverController {
         Long driverId = AuthContextHolder.getUserId();
         return Result.ok(driverService.startService(driverId));
     }
+
+    @Operation(summary = "停止接单服务")
+    @XZYLogin
+    @GetMapping("/stopService")
+    public Result<Boolean> stopService() {
+        Long driverId = AuthContextHolder.getUserId();
+        return Result.ok(driverService.stopService(driverId));
+    }
 }
 

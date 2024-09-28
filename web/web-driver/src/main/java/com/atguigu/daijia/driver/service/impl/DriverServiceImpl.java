@@ -125,4 +125,18 @@ public class DriverServiceImpl implements DriverService {
 
         return true;
     }
+
+    // 停止接单服务
+    @Override
+    public Boolean stopService(Long driverId) {
+        // 1.更新司机的接单状态 0
+        driverInfoFeignClient.updateServiceStatus(driverId, 0);
+
+        // 2.删除司机位置信息
+        locationFeignClient.removeDriverLocation(driverId);
+
+        // 3.清空司机临时队列
+        newOrderFeignClient.clearNewOrderQueueData(driverId);
+        return true;
+    }
 }
