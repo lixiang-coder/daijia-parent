@@ -13,6 +13,8 @@ import com.atguigu.daijia.order.service.OrderInfoService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -33,6 +35,9 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
 
     @Resource
     private RedisTemplate redisTemplate;
+
+    @Resource
+    RedissonClient redissonClient;
 
     //乘客下单（保存订单信息）
     @Override
@@ -78,8 +83,7 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
     }
 
     // 司机抢单（V1.0）
-    @Override
-    public Boolean robNewOrder(Long driverId, Long orderId) {
+    public Boolean robNewOrder1(Long driverId, Long orderId) {
         // 1.判断订单是否存在，通过redis减轻数据库压力
         if (Boolean.FALSE.equals(redisTemplate.hasKey(RedisConstant.ORDER_ACCEPT_MARK + orderId))) {
             // 抢单失败
@@ -110,7 +114,7 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
     }
 
     // 司机抢单（乐观锁添加版本号方案解决并发问题）
-    public Boolean robNewOrder1(Long driverId, Long orderId) {
+    public Boolean robNewOrder2(Long driverId, Long orderId) {
         // 1.判断订单是否存在，通过redis减轻数据库压力
         if (Boolean.FALSE.equals(redisTemplate.hasKey(RedisConstant.ORDER_ACCEPT_MARK + orderId))) {
             // 抢单失败
@@ -138,6 +142,57 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
 
         // 4.删除抢单标识
         redisTemplate.delete(RedisConstant.ORDER_ACCEPT_MARK + orderId);
+        return true;
+    }
+
+    // 司机抢单（Redisson分布式锁）
+    @Override
+    public Boolean robNewOrder(Long driverId, Long orderId) {
+        // 1.判断订单是否存在，通过redis减轻数据库压力
+        if (Boolean.FALSE.equals(redisTemplate.hasKey(RedisConstant.ORDER_ACCEPT_MARK + orderId))) {
+            // 抢单失败
+            throw new GuiguException(ResultCodeEnum.COB_NEW_ORDER_FAIL);
+        }
+        // 2.初始化分布式锁，创建一个RLock实例
+        RLock lock = redissonClient.getLock(RedisConstant.ROB_NEW_ORDER_LOCK + orderId);
+
+        try {
+            // 二次判断，防止重复抢单
+            if (Boolean.FALSE.equals(redisTemplate.hasKey(RedisConstant.ORDER_ACCEPT_MARK))) {
+                //抢单失败
+                throw new GuiguException(ResultCodeEnum.COB_NEW_ORDER_FAIL);
+            }
+            // 3.获取分布式锁
+            boolean falg = lock.tryLock(RedisConstant.ROB_NEW_ORDER_LOCK_WAIT_TIME, RedisConstant.ROB_NEW_ORDER_LOCK_LEASE_TIME, TimeUnit.SECONDS);
+            if (falg) {
+                // 3.司机抢单。修改order_info表的状态值为2：代表已接单 + 司机id + 司机接单时间
+                // 修改的条件：根据订单id
+                LambdaQueryWrapper<OrderInfo> wrapper = new LambdaQueryWrapper<>();
+                wrapper.eq(OrderInfo::getId, orderId);
+                OrderInfo orderInfo = orderInfoMapper.selectOne(wrapper);
+
+                // 4.设置参数
+                orderInfo.setDriverId(driverId);
+                orderInfo.setStatus(OrderStatus.ACCEPTED.getStatus());
+                orderInfo.setAcceptTime(new Date());
+                int rows = orderInfoMapper.updateById(orderInfo);
+
+                if (rows != 1) {
+                    //抢单失败
+                    throw new GuiguException(ResultCodeEnum.COB_NEW_ORDER_FAIL);
+                }
+                // 5.删除抢单标识
+                redisTemplate.delete(RedisConstant.ORDER_ACCEPT_MARK + orderId);
+            }
+        } catch (Exception e) {
+            //抢单失败
+            throw new GuiguException(ResultCodeEnum.COB_NEW_ORDER_FAIL);
+        } finally {
+            // 6.释放分布式锁
+            if (lock.isLocked()) {
+                lock.unlock();
+            }
+        }
         return true;
     }
 }
