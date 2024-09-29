@@ -68,34 +68,6 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         return orderInfo.getStatus();
     }
 
-    // 司机抢单
-    @Override
-    public Boolean robNewOrder(Long driverId, Long orderId) {
-        // 1.判断订单是否存在，通过redis减轻数据库压力
-        if (!redisTemplate.hasKey(RedisConstant.ORDER_ACCEPT_MARK + orderId)) {
-            // 抢单失败
-            throw new GuiguException(ResultCodeEnum.COB_NEW_ORDER_FAIL);
-        }
-        // 2.司机抢单。修改order_info表的状态值为2：代表已接单 + 司机id + 司机接单时间
-        // 修改的条件：根据订单id
-        LambdaQueryWrapper<OrderInfo> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(OrderInfo::getId, orderId);
-        OrderInfo orderInfo = orderInfoMapper.selectOne(wrapper);
-        // 设置参数
-        orderInfo.setDriverId(driverId);
-        orderInfo.setStatus(OrderStatus.ACCEPTED.getStatus());
-        orderInfo.setAcceptTime(new Date());
-        int rows = orderInfoMapper.updateById(orderInfo);
-
-        if (rows != 1) {
-            //抢单失败
-            throw new GuiguException(ResultCodeEnum.COB_NEW_ORDER_FAIL);
-        }
-        //删除抢单标识
-        redisTemplate.delete(RedisConstant.ORDER_ACCEPT_MARK + orderId);
-        return true;
-    }
-
     // 向订单状态日志记录表插入数据
     public void log(Long orderId, Integer status) {
         OrderStatusLog orderStatusLog = new OrderStatusLog();
@@ -103,5 +75,69 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         orderStatusLog.setOrderStatus(status);
         orderStatusLog.setOperateTime(new Date());
         orderStatusLogMapper.insert(orderStatusLog);
+    }
+
+    // 司机抢单（V1.0）
+    @Override
+    public Boolean robNewOrder(Long driverId, Long orderId) {
+        // 1.判断订单是否存在，通过redis减轻数据库压力
+        if (Boolean.FALSE.equals(redisTemplate.hasKey(RedisConstant.ORDER_ACCEPT_MARK + orderId))) {
+            // 抢单失败
+            throw new GuiguException(ResultCodeEnum.COB_NEW_ORDER_FAIL);
+        }
+
+        // 2.司机抢单。修改order_info表的状态值为2：代表已接单 + 司机id + 司机接单时间
+        // 修改的条件：根据订单id
+        LambdaQueryWrapper<OrderInfo> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(OrderInfo::getId, orderId);
+        OrderInfo orderInfo = orderInfoMapper.selectOne(wrapper);
+
+        // 3.设置参数
+        orderInfo.setDriverId(driverId);
+        orderInfo.setStatus(OrderStatus.ACCEPTED.getStatus());
+        orderInfo.setAcceptTime(new Date());
+
+        int rows = orderInfoMapper.updateById(orderInfo);
+
+        if (rows != 1) {
+            //抢单失败
+            throw new GuiguException(ResultCodeEnum.COB_NEW_ORDER_FAIL);
+        }
+
+        // 4.删除抢单标识
+        redisTemplate.delete(RedisConstant.ORDER_ACCEPT_MARK + orderId);
+        return true;
+    }
+
+    // 司机抢单（乐观锁添加版本号方案解决并发问题）
+    public Boolean robNewOrder1(Long driverId, Long orderId) {
+        // 1.判断订单是否存在，通过redis减轻数据库压力
+        if (Boolean.FALSE.equals(redisTemplate.hasKey(RedisConstant.ORDER_ACCEPT_MARK + orderId))) {
+            // 抢单失败
+            throw new GuiguException(ResultCodeEnum.COB_NEW_ORDER_FAIL);
+        }
+
+        // 2.司机抢单。修改order_info表的状态值为2：代表已接单 + 司机id + 司机接单时间
+        // update order_info set status = 2 ,driver_id = ?,accept_time = ? where id= ? and status = 1
+        LambdaQueryWrapper<OrderInfo> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(OrderInfo::getId, orderId);
+        wrapper.eq(OrderInfo::getStatus, OrderStatus.WAITING_ACCEPT.getStatus());
+
+        // 3.设置参数
+        OrderInfo orderInfo = new OrderInfo();
+        orderInfo.setStatus(OrderStatus.ACCEPTED.getStatus());
+        orderInfo.setDriverId(driverId);
+        orderInfo.setAcceptTime(new Date());
+
+        int rows = orderInfoMapper.update(orderInfo, wrapper);
+
+        if (rows != 1) {
+            //抢单失败
+            throw new GuiguException(ResultCodeEnum.COB_NEW_ORDER_FAIL);
+        }
+
+        // 4.删除抢单标识
+        redisTemplate.delete(RedisConstant.ORDER_ACCEPT_MARK + orderId);
+        return true;
     }
 }
