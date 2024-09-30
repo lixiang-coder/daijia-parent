@@ -55,5 +55,11 @@ public class OrderInfoController {
         return Result.ok(orderInfoService.getById(orderId));
     }
 
+    @Operation(summary = "司机到达起始点")
+    @GetMapping("/driverArriveStartLocation/{orderId}/{driverId}")
+    public Result<Boolean> driverArriveStartLocation(@PathVariable Long orderId, @PathVariable Long driverId) {
+        return Result.ok(orderInfoService.driverArriveStartLocation(orderId, driverId));
+    }
+
 }
 
