@@ -33,13 +33,12 @@ public class OrderController {
         return Result.ok(orderService.getOrderStatus(orderId));
     }
 
-    @Operation(summary = "查找司机端当前订单")
+    @Operation(summary = "司机端查找当前订单")
     @XZYLogin
     @GetMapping("/searchDriverCurrentOrder")
     public Result<CurrentOrderInfoVo> searchDriverCurrentOrder() {
-        CurrentOrderInfoVo currentOrderInfoVo = new CurrentOrderInfoVo();
-        // todo 后续完善
-        currentOrderInfoVo.setIsHasCurrentOrder(false);
+        Long driverId = AuthContextHolder.getUserId();
+        CurrentOrderInfoVo currentOrderInfoVo = orderService.searchDriverCurrentOrder(driverId);
         return Result.ok(currentOrderInfoVo);
     }
 
