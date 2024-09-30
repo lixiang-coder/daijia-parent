@@ -3,10 +3,8 @@ package com.atguigu.daijia.driver.controller;
 import com.atguigu.daijia.common.checklogin.XZYLogin;
 import com.atguigu.daijia.common.result.Result;
 import com.atguigu.daijia.common.util.AuthContextHolder;
-import com.atguigu.daijia.driver.service.LocationService;
 import com.atguigu.daijia.driver.service.OrderService;
 import com.atguigu.daijia.model.form.map.CalculateDrivingLineForm;
-import com.atguigu.daijia.model.form.map.UpdateOrderLocationForm;
 import com.atguigu.daijia.model.vo.map.DrivingLineVo;
 import com.atguigu.daijia.model.vo.order.CurrentOrderInfoVo;
 import com.atguigu.daijia.model.vo.order.NewOrderDataVo;
@@ -27,9 +25,6 @@ import java.util.List;
 public class OrderController {
     @Resource
     private OrderService orderService;
-
-    @Resource
-    private LocationService locationService;
 
     @Operation(summary = "查询订单状态")
     @XZYLogin
@@ -77,13 +72,5 @@ public class OrderController {
     public Result<DrivingLineVo> calculateDrivingLine(@RequestBody CalculateDrivingLineForm calculateDrivingLineForm) {
         return Result.ok(orderService.calculateDrivingLine(calculateDrivingLineForm));
     }
-
-    @Operation(summary = "司机赶往代驾起始点：更新订单位置到Redis缓存")
-    @XZYLogin
-    @PostMapping("/updateOrderLocationToCache")
-    public Result updateOrderLocationToCache(@RequestBody UpdateOrderLocationForm updateOrderLocationForm) {
-        return Result.ok(locationService.updateOrderLocationToCache(updateOrderLocationForm));
-    }
-
 }
 
