@@ -4,6 +4,7 @@ import com.atguigu.daijia.common.result.Result;
 import com.atguigu.daijia.model.entity.order.OrderInfo;
 import com.atguigu.daijia.model.enums.OrderStatus;
 import com.atguigu.daijia.model.form.order.OrderInfoForm;
+import com.atguigu.daijia.model.form.order.UpdateOrderCartForm;
 import com.atguigu.daijia.model.vo.order.CurrentOrderInfoVo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -79,4 +80,13 @@ public interface OrderInfoFeignClient {
      */
     @GetMapping("/order/info/driverArriveStartLocation/{orderId}/{driverId}")
     Result<Boolean> driverArriveStartLocation(@PathVariable("orderId") Long orderId, @PathVariable("driverId") Long driverId);
+
+    /**
+     * 更新代驾车辆信息
+     *
+     * @param updateOrderCartForm
+     * @return
+     */
+    @PostMapping("/order/info//updateOrderCart")
+    Result<Boolean> updateOrderCart(@RequestBody UpdateOrderCartForm updateOrderCartForm);
 }
