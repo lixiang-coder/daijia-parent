@@ -7,6 +7,7 @@ import com.atguigu.daijia.model.entity.order.OrderInfo;
 import com.atguigu.daijia.model.entity.order.OrderStatusLog;
 import com.atguigu.daijia.model.enums.OrderStatus;
 import com.atguigu.daijia.model.form.order.OrderInfoForm;
+import com.atguigu.daijia.model.vo.order.CurrentOrderInfoVo;
 import com.atguigu.daijia.order.mapper.OrderInfoMapper;
 import com.atguigu.daijia.order.mapper.OrderStatusLogMapper;
 import com.atguigu.daijia.order.service.OrderInfoService;
@@ -194,5 +195,45 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
             }
         }
         return true;
+    }
+
+    // 乘客端查找当前订单
+    @Override
+    public CurrentOrderInfoVo searchCustomerCurrentOrder(Long customerId) {
+        //封装条件：乘客id
+        LambdaQueryWrapper<OrderInfo> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(OrderInfo::getCustomerId, customerId);
+
+        //各种状态
+        Integer[] statusArray = {
+                OrderStatus.ACCEPTED.getStatus(),
+                OrderStatus.DRIVER_ARRIVED.getStatus(),
+                OrderStatus.UPDATE_CART_INFO.getStatus(),
+                OrderStatus.START_SERVICE.getStatus(),
+                OrderStatus.END_SERVICE.getStatus(),
+                OrderStatus.UNPAID.getStatus()
+        };
+
+        wrapper.in(OrderInfo::getStatus, statusArray);
+
+        //获取最新一条记录（将id倒序排列，取第一条数据）
+        wrapper.orderByDesc(OrderInfo::getId);
+        wrapper.last(" limit 1");
+
+        //调用方法: select * from order_info where customerId = ? and status in (1,2,3...) limit 1
+        OrderInfo orderInfo = orderInfoMapper.selectOne(wrapper);
+
+        //封装到 CurrentOrderInfoVo
+        CurrentOrderInfoVo currentOrderInfoVo = new CurrentOrderInfoVo();
+
+        if (orderInfo != null) {
+            currentOrderInfoVo.setOrderId(orderInfo.getId());
+            currentOrderInfoVo.setStatus(orderInfo.getStatus());
+            currentOrderInfoVo.setIsHasCurrentOrder(true);
+        } else {
+            currentOrderInfoVo.setIsHasCurrentOrder(false);
+        }
+
+        return currentOrderInfoVo;
     }
 }

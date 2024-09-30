@@ -23,13 +23,12 @@ public class OrderController {
     @Resource
     private OrderService orderService;
 
-    @Operation(summary = "查找乘客端当前订单")
+    @Operation(summary = "乘客端查找当前订单")
     @XZYLogin
     @GetMapping("/searchCustomerCurrentOrder")
     public Result<CurrentOrderInfoVo> searchCustomerCurrentOrder() {
-        CurrentOrderInfoVo currentOrderInfoVo = new CurrentOrderInfoVo();
-        //TODO 后续完善，目前假设乘客当前没有订单
-        currentOrderInfoVo.setIsHasCurrentOrder(false);
+        Long customerId = AuthContextHolder.getUserId();
+        CurrentOrderInfoVo currentOrderInfoVo = orderService.searchCustomerCurrentOrder(customerId);
         return Result.ok(currentOrderInfoVo);
     }
 

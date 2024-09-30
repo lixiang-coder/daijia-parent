@@ -12,6 +12,7 @@ import com.atguigu.daijia.model.form.rules.FeeRuleRequestForm;
 import com.atguigu.daijia.model.vo.customer.ExpectOrderVo;
 import com.atguigu.daijia.model.vo.dispatch.NewOrderTaskVo;
 import com.atguigu.daijia.model.vo.map.DrivingLineVo;
+import com.atguigu.daijia.model.vo.order.CurrentOrderInfoVo;
 import com.atguigu.daijia.model.vo.rules.FeeRuleResponseVo;
 import com.atguigu.daijia.order.client.OrderInfoFeignClient;
 import com.atguigu.daijia.rules.client.FeeRuleFeignClient;
@@ -113,6 +114,13 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Integer getOrderStatus(Long orderId) {
         return orderInfoFeignClient.getOrderStatus(orderId).getData();
+    }
+
+    // 乘客端查找当前订单
+    @Override
+    public CurrentOrderInfoVo searchCustomerCurrentOrder(Long customerId) {
+        CurrentOrderInfoVo currentOrderInfoVo = orderInfoFeignClient.searchCustomerCurrentOrder(customerId).getData();
+        return currentOrderInfoVo;
     }
 
 }
