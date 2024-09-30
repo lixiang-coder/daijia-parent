@@ -171,4 +171,10 @@ public class OrderServiceImpl implements OrderService {
         return locationFeignClient.getCacheOrderLocation(orderId).getData();
     }
 
+    // 计算最佳驾驶线路
+    @Override
+    public DrivingLineVo calculateDrivingLine(CalculateDrivingLineForm calculateDrivingLineForm) {
+        return mapFeignClient.calculateDrivingLine(calculateDrivingLineForm).getData();
+    }
+
 }
