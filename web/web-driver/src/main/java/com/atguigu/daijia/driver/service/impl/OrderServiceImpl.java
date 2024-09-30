@@ -1,12 +1,17 @@
 package com.atguigu.daijia.driver.service.impl;
 
+import com.atguigu.daijia.common.execption.GuiguException;
+import com.atguigu.daijia.common.result.ResultCodeEnum;
 import com.atguigu.daijia.dispatch.client.NewOrderFeignClient;
 import com.atguigu.daijia.driver.service.OrderService;
+import com.atguigu.daijia.model.entity.order.OrderInfo;
 import com.atguigu.daijia.model.vo.order.CurrentOrderInfoVo;
 import com.atguigu.daijia.model.vo.order.NewOrderDataVo;
+import com.atguigu.daijia.model.vo.order.OrderInfoVo;
 import com.atguigu.daijia.order.client.OrderInfoFeignClient;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -48,5 +53,21 @@ public class OrderServiceImpl implements OrderService {
         // 远程调用
         CurrentOrderInfoVo currentOrderInfoVo = orderInfoFeignClient.searchDriverCurrentOrder(driverId).getData();
         return currentOrderInfoVo;
+    }
+
+    // 获取订单账单详细信息
+    @Override
+    public OrderInfoVo getOrderInfo(Long orderId, Long driverId) {
+        OrderInfo orderInfo = orderInfoFeignClient.getOrderInfo(orderId).getData();
+        // 判断：是不是司机自己的订单
+        if (orderInfo.getDriverId().longValue() != driverId.longValue()) {
+            throw new GuiguException(ResultCodeEnum.ILLEGAL_REQUEST);
+        }
+
+        //封装订单信息
+        OrderInfoVo orderInfoVo = new OrderInfoVo();
+        orderInfoVo.setOrderId(orderId);
+        BeanUtils.copyProperties(orderInfo, orderInfoVo);
+        return orderInfoVo;
     }
 }

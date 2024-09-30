@@ -6,6 +6,7 @@ import com.atguigu.daijia.common.util.AuthContextHolder;
 import com.atguigu.daijia.driver.service.OrderService;
 import com.atguigu.daijia.model.vo.order.CurrentOrderInfoVo;
 import com.atguigu.daijia.model.vo.order.NewOrderDataVo;
+import com.atguigu.daijia.model.vo.order.OrderInfoVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
@@ -57,5 +58,14 @@ public class OrderController {
         Long driverId = AuthContextHolder.getUserId();
         return Result.ok(orderService.robNewOrder(driverId, orderId));
     }
+
+    @Operation(summary = "获取订单账单详细信息")
+    @XZYLogin
+    @GetMapping("/getOrderInfo/{orderId}")
+    public Result<OrderInfoVo> getOrderInfo(@PathVariable Long orderId) {
+        Long driverId = AuthContextHolder.getUserId();
+        return Result.ok(orderService.getOrderInfo(orderId, driverId));
+    }
+
 }
 

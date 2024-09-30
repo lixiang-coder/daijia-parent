@@ -1,6 +1,7 @@
 package com.atguigu.daijia.order.client;
 
 import com.atguigu.daijia.common.result.Result;
+import com.atguigu.daijia.model.entity.order.OrderInfo;
 import com.atguigu.daijia.model.enums.OrderStatus;
 import com.atguigu.daijia.model.form.order.OrderInfoForm;
 import com.atguigu.daijia.model.vo.order.CurrentOrderInfoVo;
@@ -59,4 +60,13 @@ public interface OrderInfoFeignClient {
      */
     @GetMapping("/order/info/searchDriverCurrentOrder/{driverId}")
     Result<CurrentOrderInfoVo> searchDriverCurrentOrder(@PathVariable("driverId") Long driverId);
+
+    /**
+     * 根据订单id获取订单信息
+     *
+     * @param orderId
+     * @return
+     */
+    @GetMapping("/order/info/getOrderInfo/{orderId}")
+    Result<OrderInfo> getOrderInfo(@PathVariable("orderId") Long orderId);
 }
