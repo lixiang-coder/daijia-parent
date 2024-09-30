@@ -160,7 +160,7 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
 
         try {
             // 二次判断，防止重复抢单
-            if (Boolean.FALSE.equals(redisTemplate.hasKey(RedisConstant.ORDER_ACCEPT_MARK))) {
+            if (Boolean.FALSE.equals(redisTemplate.hasKey(RedisConstant.ORDER_ACCEPT_MARK  + orderId))) {
                 //抢单失败
                 throw new GuiguException(ResultCodeEnum.COB_NEW_ORDER_FAIL);
             }
