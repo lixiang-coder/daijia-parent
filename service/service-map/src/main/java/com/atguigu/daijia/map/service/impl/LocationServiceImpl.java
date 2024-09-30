@@ -8,7 +8,9 @@ import com.atguigu.daijia.map.service.LocationService;
 import com.atguigu.daijia.model.entity.driver.DriverSet;
 import com.atguigu.daijia.model.form.map.SearchNearByDriverForm;
 import com.atguigu.daijia.model.form.map.UpdateDriverLocationForm;
+import com.atguigu.daijia.model.form.map.UpdateOrderLocationForm;
 import com.atguigu.daijia.model.vo.map.NearByDriverVo;
+import com.atguigu.daijia.model.vo.map.OrderLocationVo;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.geo.*;
@@ -121,5 +123,18 @@ public class LocationServiceImpl implements LocationService {
             }
         }
         return list;
+    }
+
+    // 司机赶往代驾起始点：更新订单地址到缓存
+    @Override
+    public Boolean updateOrderLocationToCache(UpdateOrderLocationForm updateOrderLocationForm) {
+        OrderLocationVo orderLocationVo = new OrderLocationVo();
+        // 设置参数：经纬度
+        orderLocationVo.setLongitude(updateOrderLocationForm.getLongitude());
+        orderLocationVo.setLatitude(updateOrderLocationForm.getLatitude());
+
+        String key = RedisConstant.UPDATE_ORDER_LOCATION + updateOrderLocationForm.getOrderId();
+        redisTemplate.opsForValue().set(key,orderLocationVo);
+        return true;
     }
 }
