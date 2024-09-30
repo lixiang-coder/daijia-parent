@@ -8,6 +8,7 @@ import com.atguigu.daijia.model.form.customer.ExpectOrderForm;
 import com.atguigu.daijia.model.form.customer.SubmitOrderForm;
 import com.atguigu.daijia.model.vo.customer.ExpectOrderVo;
 import com.atguigu.daijia.model.vo.driver.DriverInfoVo;
+import com.atguigu.daijia.model.vo.map.OrderLocationVo;
 import com.atguigu.daijia.model.vo.order.CurrentOrderInfoVo;
 import com.atguigu.daijia.model.vo.order.OrderInfoVo;
 import io.swagger.v3.oas.annotations.Operation;
@@ -73,6 +74,12 @@ public class OrderController {
         return Result.ok(orderService.getDriverInfo(orderId, customerId));
     }
 
+    @Operation(summary = "司机赶往代驾起始点：从缓存中获取订单经纬度位置")
+    @XZYLogin
+    @GetMapping("/getCacheOrderLocation/{orderId}")
+    public Result<OrderLocationVo> getOrderLocation(@PathVariable Long orderId) {
+        return Result.ok(orderService.getCacheOrderLocation(orderId));
+    }
 
 }
 

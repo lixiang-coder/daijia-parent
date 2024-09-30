@@ -6,6 +6,7 @@ import com.atguigu.daijia.model.form.map.SearchNearByDriverForm;
 import com.atguigu.daijia.model.form.map.UpdateDriverLocationForm;
 import com.atguigu.daijia.model.form.map.UpdateOrderLocationForm;
 import com.atguigu.daijia.model.vo.map.NearByDriverVo;
+import com.atguigu.daijia.model.vo.map.OrderLocationVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
@@ -47,6 +48,12 @@ public class LocationController {
     @PostMapping("/updateOrderLocationToCache")
     public Result<Boolean> updateOrderLocationToCache(@RequestBody UpdateOrderLocationForm updateOrderLocationForm) {
         return Result.ok(locationService.updateOrderLocationToCache(updateOrderLocationForm));
+    }
+
+    @Operation(summary = "司机赶往代驾起始点：从缓存中获取订单经纬度位置")
+    @GetMapping("/getCacheOrderLocation/{orderId}")
+    public Result<OrderLocationVo> getCacheOrderLocation(@PathVariable Long orderId) {
+        return Result.ok(locationService.getCacheOrderLocation(orderId));
     }
 
 }

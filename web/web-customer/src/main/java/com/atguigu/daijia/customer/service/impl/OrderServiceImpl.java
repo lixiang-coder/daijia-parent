@@ -6,6 +6,7 @@ import com.atguigu.daijia.common.result.ResultCodeEnum;
 import com.atguigu.daijia.customer.service.OrderService;
 import com.atguigu.daijia.dispatch.client.NewOrderFeignClient;
 import com.atguigu.daijia.driver.client.DriverInfoFeignClient;
+import com.atguigu.daijia.map.client.LocationFeignClient;
 import com.atguigu.daijia.map.client.MapFeignClient;
 import com.atguigu.daijia.model.entity.order.OrderInfo;
 import com.atguigu.daijia.model.form.customer.ExpectOrderForm;
@@ -17,6 +18,7 @@ import com.atguigu.daijia.model.vo.customer.ExpectOrderVo;
 import com.atguigu.daijia.model.vo.dispatch.NewOrderTaskVo;
 import com.atguigu.daijia.model.vo.driver.DriverInfoVo;
 import com.atguigu.daijia.model.vo.map.DrivingLineVo;
+import com.atguigu.daijia.model.vo.map.OrderLocationVo;
 import com.atguigu.daijia.model.vo.order.CurrentOrderInfoVo;
 import com.atguigu.daijia.model.vo.order.OrderInfoVo;
 import com.atguigu.daijia.model.vo.rules.FeeRuleResponseVo;
@@ -47,6 +49,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Resource
     private DriverInfoFeignClient driverInfoFeignClient;
+
+    @Resource
+    private LocationFeignClient locationFeignClient;
 
 
     // 预估订单数据
@@ -158,6 +163,12 @@ public class OrderServiceImpl implements OrderService {
             throw new GuiguException(ResultCodeEnum.ILLEGAL_REQUEST);
         }
         return driverInfoFeignClient.getDriverInfo(orderInfo.getDriverId()).getData();
+    }
+
+    // 司机赶往代驾起始点：从缓存中获取订单经纬度位置
+    @Override
+    public OrderLocationVo getCacheOrderLocation(Long orderId) {
+        return locationFeignClient.getCacheOrderLocation(orderId).getData();
     }
 
 }

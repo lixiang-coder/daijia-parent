@@ -134,7 +134,15 @@ public class LocationServiceImpl implements LocationService {
         orderLocationVo.setLatitude(updateOrderLocationForm.getLatitude());
 
         String key = RedisConstant.UPDATE_ORDER_LOCATION + updateOrderLocationForm.getOrderId();
-        redisTemplate.opsForValue().set(key,orderLocationVo);
+        redisTemplate.opsForValue().set(key, orderLocationVo);
         return true;
+    }
+
+    // 司机赶往代驾起始点：从缓存中获取订单经纬度位置
+    @Override
+    public OrderLocationVo getCacheOrderLocation(Long orderId) {
+        String key = RedisConstant.UPDATE_ORDER_LOCATION + orderId;
+        OrderLocationVo orderLocationVo = (OrderLocationVo) redisTemplate.opsForValue().get(key);
+        return orderLocationVo;
     }
 }
