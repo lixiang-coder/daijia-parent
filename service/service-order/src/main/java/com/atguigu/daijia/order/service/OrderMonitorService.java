@@ -7,4 +7,10 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface OrderMonitorService extends IService<OrderMonitor> {
 
     Boolean saveOrderMonitorRecord(OrderMonitorRecord orderMonitorRecord);
+
+    OrderMonitor getOrderMonitor(Long orderId);
+
+    Boolean updateOrderMonitor(OrderMonitor orderMonitor);
+
+    Long saveOrderMonitor(OrderMonitor orderMonitor);
 }
