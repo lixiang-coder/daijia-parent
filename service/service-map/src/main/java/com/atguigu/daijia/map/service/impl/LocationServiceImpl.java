@@ -14,11 +14,16 @@ import com.atguigu.daijia.model.form.map.UpdateDriverLocationForm;
 import com.atguigu.daijia.model.form.map.UpdateOrderLocationForm;
 import com.atguigu.daijia.model.vo.map.NearByDriverVo;
 import com.atguigu.daijia.model.vo.map.OrderLocationVo;
+import com.atguigu.daijia.model.vo.map.OrderServiceLastLocationVo;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.geo.*;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.redis.connection.RedisGeoCommands;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -44,6 +49,9 @@ public class LocationServiceImpl implements LocationService {
 
     @Resource
     private OrderServiceLocationRepository orderServiceLocationRepository;
+
+    @Resource
+    private MongoTemplate mongoTemplate;
 
 
     // 司机开启接单，更新司机位置信息
@@ -154,7 +162,7 @@ public class LocationServiceImpl implements LocationService {
         return orderLocationVo;
     }
 
-    // 开始代驾服务：保存代驾服务订单位置
+    // 开始代驾服务：保存代驾服务订单位置（MongoRepository操作MongoDB）
     @Override
     public Boolean saveOrderServiceLocation(List<OrderServiceLocationForm> orderLocationServiceFormList) {
         List<OrderServiceLocation> list = new ArrayList<>();
@@ -174,7 +182,26 @@ public class LocationServiceImpl implements LocationService {
             list.add(orderServiceLocation);
         });
         // 批量添加到MongoDB
-        orderServiceLocationRepository.saveAll(list) ;
+        orderServiceLocationRepository.saveAll(list);
         return true;
+    }
+
+    // 代驾服务：获取订单服务最后一个位置信息（MongoTemplate操作MongoDB）
+    @Override
+    public OrderServiceLastLocationVo getOrderServiceLastLocation(Long orderId) {
+        /* 查询MongoDB
+                1.查询条件 ：orderId
+                2.根据创建时间降序排列
+                3.获取最新一条数据
+        */
+        Query query = new Query();
+        query.addCriteria(Criteria.where("orderId").is(orderId));
+        query.with(Sort.by(Sort.Order.desc("createTime")));
+        query.limit(1);
+
+        OrderServiceLocation orderServiceLocation = mongoTemplate.findOne(query, OrderServiceLocation.class);
+        OrderServiceLastLocationVo orderServiceLastLocationVo = new OrderServiceLastLocationVo();
+        BeanUtils.copyProperties(orderServiceLocation, orderServiceLastLocationVo);
+        return orderServiceLastLocationVo;
     }
 }
