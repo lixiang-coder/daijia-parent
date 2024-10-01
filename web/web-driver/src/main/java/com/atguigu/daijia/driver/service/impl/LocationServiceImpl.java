@@ -7,11 +7,14 @@ import com.atguigu.daijia.driver.client.DriverInfoFeignClient;
 import com.atguigu.daijia.driver.service.LocationService;
 import com.atguigu.daijia.map.client.LocationFeignClient;
 import com.atguigu.daijia.model.entity.driver.DriverSet;
+import com.atguigu.daijia.model.form.map.OrderServiceLocationForm;
 import com.atguigu.daijia.model.form.map.UpdateDriverLocationForm;
 import com.atguigu.daijia.model.form.map.UpdateOrderLocationForm;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -46,5 +49,11 @@ public class LocationServiceImpl implements LocationService {
     public Boolean updateOrderLocationToCache(UpdateOrderLocationForm updateOrderLocationForm) {
         Boolean result = locationFeignClient.updateOrderLocationToCache(updateOrderLocationForm).getData();
         return result;
+    }
+
+    // 开始代驾服务：保存代驾服务订单位置
+    @Override
+    public Boolean saveOrderServiceLocation(List<OrderServiceLocationForm> orderLocationServiceFormList) {
+        return locationFeignClient.saveOrderServiceLocation(orderLocationServiceFormList).getData();
     }
 }
