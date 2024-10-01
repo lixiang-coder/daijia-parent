@@ -21,7 +21,7 @@ public class FileController {
     @Resource
     private FileService fileService;
 
-    // 接口冲突：上次的测式司机到达后录入车辆信息 前端调用的就是 filecontroller 的upload接口 所以司机的前后车照都放minio了
+
     /*@Operation(summary = "文件上传")
     @XZYLogin
     @PostMapping("/upload")
@@ -29,6 +29,7 @@ public class FileController {
         return Result.ok(cosService.upload(file, path));
     }*/
 
+    // 接口冲突：司机到达后录入车辆信息 前端调用的是FileController的upload接口将司机的前后车照都放minio了
     @Operation(summary = "Minio文件上传")
     @PostMapping("upload")
     public Result<String> upload(@RequestPart("file") MultipartFile file) {
