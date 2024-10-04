@@ -15,8 +15,7 @@ public class LocationUtil {
      * @参数 [lat1, lng1, lat2, lng2]
      * @返回值 double
      **/
-    public static double getDistance(double lat1, double lng1, double lat2,
-                                     double lng2) {
+    public static double getDistance(double lat1, double lng1, double lat2, double lng2) {
         double radLat1 = rad(lat1);
         double radLat2 = rad(lat2);
         double a = radLat1 - radLat2;
@@ -31,8 +30,7 @@ public class LocationUtil {
     }
 
     public static void main(String[] args) {
-        double distance = getDistance(30.57404, 104.073013,
-                30.509376, 104.077001);
+        double distance = getDistance(30.57404, 104.073013, 30.509376, 104.077001);
         System.out.println("距离" + distance + "米");
     }
 
