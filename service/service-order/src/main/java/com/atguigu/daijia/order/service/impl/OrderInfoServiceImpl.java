@@ -341,4 +341,15 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         orderMonitorService.saveOrderMonitor(orderMonitor);
         return true;
     }
+
+    // 根据时间段获取订单数
+    @Override
+    public Long getOrderNumByTime(String startTime, String endTime) {
+        // 09 <= time < 10
+        LambdaQueryWrapper<OrderInfo> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.ge(OrderInfo::getStartServiceTime, startTime);
+        queryWrapper.lt(OrderInfo::getStartServiceTime, endTime);
+        Long count = orderInfoMapper.selectCount(queryWrapper);
+        return count;
+    }
 }
