@@ -25,6 +25,7 @@ public class ProfitsharingRuleServiceImpl implements ProfitsharingRuleService {
     private ProfitsharingRuleMapper rewardRuleMapper;
 
 
+    // 计算系统分账费用
     @Override
     public ProfitsharingRuleResponseVo calculateOrderProfitsharingFee(ProfitsharingRuleRequestForm profitsharingRuleRequestForm) {
         //封装传入对象
