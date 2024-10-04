@@ -21,10 +21,10 @@ public class OrderServiceLocation {
 	private Long orderId;
 
 	@Schema(description = "经度")
-	private BigDecimal latitude;
+	private BigDecimal longitude;
 
 	@Schema(description = "纬度")
-	private BigDecimal longitude;
+	private BigDecimal latitude;
 
 	@Schema(description = "创建时间")
 	private Date createTime;

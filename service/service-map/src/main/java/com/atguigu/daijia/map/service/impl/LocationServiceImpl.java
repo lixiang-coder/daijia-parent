@@ -242,10 +242,10 @@ public class LocationServiceImpl implements LocationService {
                 OrderServiceLocation location2 = list.get(i + 1);
 
                 //计算位置距离
-                double distance = LocationUtil.getDistance(location1.getLatitude().doubleValue(),
-                        location1.getLongitude().doubleValue(),
-                        location2.getLatitude().doubleValue(),
-                        location2.getLongitude().doubleValue());
+                double distance = LocationUtil.getDistance(location1.getLongitude().doubleValue(),
+                        location1.getLatitude().doubleValue(),
+                        location2.getLongitude().doubleValue(),
+                        location2.getLatitude().doubleValue());
 
                 realDistance += distance;
             }

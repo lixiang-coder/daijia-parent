@@ -44,7 +44,7 @@ public class OrderInfo extends BaseEntity {
 	@TableField("end_point_longitude")
 	private BigDecimal endPointLongitude;
 
-    @Schema(description = "结束地点经度")
+    @Schema(description = "结束地点纬度")
 	@TableField("end_point_latitude")
 	private BigDecimal endPointLatitude;
 
