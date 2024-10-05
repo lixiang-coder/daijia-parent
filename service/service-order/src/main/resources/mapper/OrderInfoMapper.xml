@@ -19,5 +19,21 @@
         order by info.create_time desc
     </select>
 
+    <!--查询司机订单分页-->
+    <select id="selectDriverOrderPage" resultType="com.atguigu.daijia.model.vo.order.OrderListVo">
+        select id,
+               order_no,
+               start_location,
+               end_location,
+               real_amount                                   as pay_amount,
+               if(status &lt; 7, expect_amount, real_amount) as amount,
+               status,
+               create_time
+        from order_info
+        where driver_id = #{driverId}
+          and is_deleted = 0
+        order by create_time desc
+    </select>
+
 </mapper>
 
