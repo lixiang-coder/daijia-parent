@@ -8,7 +8,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 
-@SpringBootApplication(exclude = DataSourceAutoConfiguration.class)//取消数据源自动配置
+@SpringBootApplication(scanBasePackages = "com.atguigu.daijia.map.repository",exclude = DataSourceAutoConfiguration.class)//取消数据源自动配置
 @EnableDiscoveryClient
 @EnableFeignClients
 public class ServiceMapApplication {
