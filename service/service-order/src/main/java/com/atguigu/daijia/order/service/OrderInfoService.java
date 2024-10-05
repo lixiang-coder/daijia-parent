@@ -5,7 +5,9 @@ import com.atguigu.daijia.model.form.order.OrderInfoForm;
 import com.atguigu.daijia.model.form.order.StartDriveForm;
 import com.atguigu.daijia.model.form.order.UpdateOrderBillForm;
 import com.atguigu.daijia.model.form.order.UpdateOrderCartForm;
+import com.atguigu.daijia.model.vo.base.PageVo;
 import com.atguigu.daijia.model.vo.order.CurrentOrderInfoVo;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 public interface OrderInfoService extends IService<OrderInfo> {
@@ -29,4 +31,6 @@ public interface OrderInfoService extends IService<OrderInfo> {
     Long getOrderNumByTime(String startTime, String endTime);
 
     Boolean endDrive(UpdateOrderBillForm updateOrderBillForm);
+
+    PageVo findCustomerOrderPage(Page<OrderInfo> pageParam, Long customerId);
 }
