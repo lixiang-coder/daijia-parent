@@ -12,10 +12,13 @@ import com.atguigu.daijia.payment.service.WxPayService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.wechat.pay.java.core.RSAAutoCertificateConfig;
 import com.wechat.pay.java.core.exception.ServiceException;
+import com.wechat.pay.java.core.notification.NotificationParser;
+import com.wechat.pay.java.core.notification.RequestParam;
 import com.wechat.pay.java.service.payments.jsapi.JsapiServiceExtension;
 import com.wechat.pay.java.service.payments.jsapi.model.*;
 import com.wechat.pay.java.service.payments.model.Transaction;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -107,7 +110,7 @@ public class WxPayServiceImpl implements WxPayService {
             Transaction transaction = service.queryOrderByOutTradeNo(queryRequest);
             log.info(JSON.toJSONString(transaction));
             //4 查询返回结果，根据结果判断
-            if(null != transaction && transaction.getTradeState() == Transaction.TradeStateEnum.SUCCESS) {
+            if (null != transaction && transaction.getTradeState() == Transaction.TradeStateEnum.SUCCESS) {
                 //5 如果支付成功，调用其他方法实现支付后处理逻辑
                 this.handlePayment(transaction);
                 return true;
@@ -123,4 +126,49 @@ public class WxPayServiceImpl implements WxPayService {
     private void handlePayment(Transaction transaction) {
 
     }
+
+    // 微信支付成功后，进行回调
+    @Override
+    public void wxnotify(HttpServletRequest request) {
+        //1.回调通知的验签与解密
+        //从request头信息获取参数
+        //HTTP 头 Wechatpay-Signature
+        // HTTP 头 Wechatpay-Nonce
+        //HTTP 头 Wechatpay-Timestamp
+        //HTTP 头 Wechatpay-Serial
+        //HTTP 头 Wechatpay-Signature-Type
+        //HTTP 请求体 body。切记使用原始报文，不要用 JSON 对象序列化后的字符串，避免验签的 body 和原文不一致。
+        String wechatPaySerial = request.getHeader("Wechatpay-Serial");
+        String nonce = request.getHeader("Wechatpay-Nonce");
+        String timestamp = request.getHeader("Wechatpay-Timestamp");
+        String signature = request.getHeader("Wechatpay-Signature");
+        String requestBody = RequestUtils.readData(request);
+        log.info("wechatPaySerial：{}", wechatPaySerial);
+        log.info("nonce：{}", nonce);
+        log.info("timestamp：{}", timestamp);
+        log.info("signature：{}", signature);
+        log.info("requestBody：{}", requestBody);
+
+        //2.构造 RequestParam
+        RequestParam requestParam = new RequestParam.Builder()
+                .serialNumber(wechatPaySerial)
+                .nonce(nonce)
+                .signature(signature)
+                .timestamp(timestamp)
+                .body(requestBody)
+                .build();
+
+
+        //3.初始化 NotificationParser
+        NotificationParser parser = new NotificationParser(rsaAutoCertificateConfig);
+        //4.以支付通知回调为例，验签、解密并转换成 Transaction
+        Transaction transaction = parser.parse(requestParam, Transaction.class);
+        log.info("成功解析：{}", JSON.toJSONString(transaction));
+        if (null != transaction && transaction.getTradeState() == Transaction.TradeStateEnum.SUCCESS) {
+            //5.处理支付业务
+            this.handlePayment(transaction);
+        }
+    }
+
+
 }
