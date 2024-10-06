@@ -240,4 +240,10 @@ public class OrderServiceImpl implements OrderService {
         return wxPrepayVo;
     }
 
+    // 支付状态查询
+    @Override
+    public Boolean queryPayStatus(String orderNo) {
+        return wxPayFeignClient.queryPayStatus(orderNo).getData();
+    }
+
 }

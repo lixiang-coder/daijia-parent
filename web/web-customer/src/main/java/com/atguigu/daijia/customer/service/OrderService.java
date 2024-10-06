@@ -34,4 +34,6 @@ public interface OrderService {
     OrderServiceLastLocationVo getOrderServiceLastLocation(Long orderId);
 
     WxPrepayVo createWxPayment(CreateWxPaymentForm createWxPaymentForm);
+
+    Boolean queryPayStatus(String orderNo);
 }
