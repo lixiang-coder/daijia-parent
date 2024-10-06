@@ -8,6 +8,7 @@ import com.atguigu.daijia.model.form.order.UpdateOrderBillForm;
 import com.atguigu.daijia.model.form.order.UpdateOrderCartForm;
 import com.atguigu.daijia.model.vo.base.PageVo;
 import com.atguigu.daijia.model.vo.order.CurrentOrderInfoVo;
+import com.atguigu.daijia.model.vo.order.OrderBillVo;
 import com.atguigu.daijia.order.service.OrderInfoService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.v3.oas.annotations.Operation;
@@ -114,6 +115,12 @@ public class OrderInfoController {
         pageVo.setPage(page);
         pageVo.setLimit(limit);
         return Result.ok(pageVo);
+    }
+
+    @Operation(summary = "根据订单id获取实际账单信息")
+    @GetMapping("/getOrderBillInfo/{orderId}")
+    public Result<OrderBillVo> getOrderBillInfo(@PathVariable Long orderId) {
+        return Result.ok(orderInfoService.getOrderBillInfo(orderId));
     }
 
 }
