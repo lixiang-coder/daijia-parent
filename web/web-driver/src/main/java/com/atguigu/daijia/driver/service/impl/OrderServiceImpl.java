@@ -361,4 +361,10 @@ public class OrderServiceImpl implements OrderService {
         orderInfoFeignClient.endDrive(updateOrderBillForm);
         return true;
     }
+
+    // 司机发送账单信息
+    @Override
+    public Boolean sendOrderBillInfo(Long orderId, Long driverId) {
+        return orderInfoFeignClient.sendOrderBillInfo(orderId, driverId).getData();
+    }
 }

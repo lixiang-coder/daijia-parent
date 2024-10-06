@@ -33,4 +33,6 @@ public interface OrderService {
     Boolean startDrive(StartDriveForm startDriveForm);
 
     Boolean endDrive(OrderFeeForm orderFeeForm);
+
+    Boolean sendOrderBillInfo(Long orderId, Long driverId);
 }
