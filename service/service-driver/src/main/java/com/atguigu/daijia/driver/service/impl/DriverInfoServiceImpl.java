@@ -357,4 +357,13 @@ public class DriverInfoServiceImpl extends ServiceImpl<DriverInfoMapper, DriverI
 
         return driverInfoVo;
     }
+
+    // 获取司机OpenId
+    @Override
+    public String getDriverOpenId(Long driverId) {
+        LambdaQueryWrapper<DriverInfo> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(DriverInfo::getId, driverId);
+        DriverInfo driverInfo = driverInfoMapper.selectOne(wrapper);
+        return driverInfo.getWxOpenId();
+    }
 }

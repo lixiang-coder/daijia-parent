@@ -12,4 +12,6 @@ public interface CustomerInfoService extends IService<CustomerInfo> {
     CustomerLoginVo getCustomerLoginInfo(Long customerId);
 
     Boolean updateWxPhoneNumber(UpdateWxPhoneForm updateWxPhoneForm);
+
+    String getCustomerOpenId(Long customerId);
 }
