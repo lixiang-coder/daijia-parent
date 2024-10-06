@@ -8,6 +8,7 @@ import com.atguigu.daijia.model.form.order.UpdateOrderCartForm;
 import com.atguigu.daijia.model.vo.base.PageVo;
 import com.atguigu.daijia.model.vo.order.CurrentOrderInfoVo;
 import com.atguigu.daijia.model.vo.order.OrderBillVo;
+import com.atguigu.daijia.model.vo.order.OrderProfitsharingVo;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -38,4 +39,6 @@ public interface OrderInfoService extends IService<OrderInfo> {
     PageVo findDriverOrderPage(Page<OrderInfo> pageParam, Long driverId);
 
     OrderBillVo getOrderBillInfo(Long orderId);
+
+    OrderProfitsharingVo getOrderProfitsharing(Long orderId);
 }
