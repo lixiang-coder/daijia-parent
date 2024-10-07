@@ -25,6 +25,7 @@ import com.wechat.pay.java.core.notification.RequestParam;
 import com.wechat.pay.java.service.payments.jsapi.JsapiServiceExtension;
 import com.wechat.pay.java.service.payments.jsapi.model.*;
 import com.wechat.pay.java.service.payments.model.Transaction;
+import io.seata.spring.annotation.GlobalTransactional;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -202,6 +203,7 @@ public class WxPayServiceImpl implements WxPayService {
     }
 
     // 微信支付成功后，后续进行处理
+    @GlobalTransactional
     @Override
     public void handleOrder(String orderNo) {
         //1.更改订单支付状态
@@ -219,7 +221,7 @@ public class WxPayServiceImpl implements WxPayService {
             driverAccountFeignClient.transfer(transferForm);
         }
 
-        //3.TODO分账
+        //3.TODO 分账
     }
 
 }
