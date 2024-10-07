@@ -57,13 +57,12 @@
 
 ### 4、技术架构图
 
-![技术架构图](docs/images/djjsjgt.png)
-
+![djjsjgt.png](..%2F..%2F%E6%96%87%E6%A1%A3%2Fproject%2F%E4%B9%90%E5%B0%9A%E4%BB%A3%E9%A9%BE%2F%E8%AF%BE%E4%BB%B6%2F%E8%AF%BE%E4%BB%B6%2Fassets%2Fdjjsjgt.png)
 
 
 ### 5、业务流程图
 
-![69811258724](docs/images/ywlct.png)
+![ywlct.png](..%2F..%2F%E6%96%87%E6%A1%A3%2Fproject%2F%E4%B9%90%E5%B0%9A%E4%BB%A3%E9%A9%BE%2F%E8%AF%BE%E4%BB%B6%2F%E8%AF%BE%E4%BB%B6%2Fassets%2Fywlct.png)
 
 ### 5、项目模块
 
