@@ -29,7 +29,9 @@ import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
@@ -553,5 +555,16 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
                 redisTemplate.delete(RedisConstant.ORDER_ACCEPT_MARK);
             }
         }
+    }
+
+    // 更新订单优惠券金额
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public Boolean updateCouponAmount(Long orderId, BigDecimal couponAmount) {
+        int row = orderBillMapper.updateCouponAmount(orderId, couponAmount);
+        if (row != 1) {
+            throw new GuiguException(ResultCodeEnum.UPDATE_ERROR);
+        }
+        return true;
     }
 }

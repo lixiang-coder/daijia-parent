@@ -4,6 +4,13 @@
 
 <mapper namespace="com.atguigu.daijia.order.mapper.OrderBillMapper">
 
+    <!--更新优惠卷金额-->
+    <update id="updateCouponAmount">
+        update order_bill
+        set coupon_amount = #{couponAmount},
+            pay_amount    = pay_amount - #{couponAmount}
+        where order_id = #{orderId}
+    </update>
 
 </mapper>
 

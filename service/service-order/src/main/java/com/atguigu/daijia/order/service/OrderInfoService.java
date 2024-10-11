@@ -10,6 +10,8 @@ import com.atguigu.daijia.model.vo.order.*;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.math.BigDecimal;
+
 public interface OrderInfoService extends IService<OrderInfo> {
 
     Long saveOrderInfo(OrderInfoForm orderInfoForm);
@@ -49,4 +51,6 @@ public interface OrderInfoService extends IService<OrderInfo> {
     OrderRewardVo getOrderRewardFee(String orderNo);
 
     void orderCancel(long orderId);
+
+    Boolean updateCouponAmount(Long orderId, BigDecimal couponAmount);
 }
