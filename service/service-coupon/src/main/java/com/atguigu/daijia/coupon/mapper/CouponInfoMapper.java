@@ -24,4 +24,6 @@ public interface CouponInfoMapper extends BaseMapper<CouponInfo> {
 
     // 更新领取数量
     int updateReceiveCount(Long couponId);
+
+    int updateReceiveCountByLimit(Long couponId);
 }

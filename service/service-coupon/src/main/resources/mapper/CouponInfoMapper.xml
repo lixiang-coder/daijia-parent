@@ -82,7 +82,7 @@
 
 	<!--乐观锁解决并发问题：增加版本号-->
 	<update id="updateReceiveCount">
-		update coupon_info set receive_count = receive_count + 1 where id = #{couponId} and receive_count &lt; publish_count;
+		update coupon_info set receive_count = receive_count + 1 where id = #{couponId} /*and receive_count &lt; publish_count;*/
 	</update>
 
 	<update id="updateReceiveCountByLimit">
