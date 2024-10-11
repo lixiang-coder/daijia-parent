@@ -1,6 +1,7 @@
 package com.atguigu.daijia.coupon.service;
 
 import com.atguigu.daijia.model.entity.coupon.CouponInfo;
+import com.atguigu.daijia.model.form.coupon.UseCouponForm;
 import com.atguigu.daijia.model.vo.base.PageVo;
 import com.atguigu.daijia.model.vo.coupon.AvailableCouponVo;
 import com.atguigu.daijia.model.vo.coupon.NoReceiveCouponVo;
@@ -23,4 +24,6 @@ public interface CouponInfoService extends IService<CouponInfo> {
     Boolean receive(Long customerId, Long couponId);
 
     List<AvailableCouponVo> findAvailableCoupon(Long customerId, BigDecimal orderAmount);
+
+    BigDecimal useCoupon(UseCouponForm useCouponForm);
 }

@@ -31,4 +31,7 @@ public interface CouponInfoMapper extends BaseMapper<CouponInfo> {
 
     // 获取未使用的优惠券列表
     List<NoUseCouponVo> findNoUseList(Long customerId);
+
+    // 更新使用次数
+    int updateUseCount(Long id);
 }
