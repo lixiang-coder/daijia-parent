@@ -15,4 +15,6 @@ public interface CouponInfoService extends IService<CouponInfo> {
     PageVo<NoUseCouponVo> findNoUsePage(Page<CouponInfo> pageParam, Long customerId);
 
     PageVo<UsedCouponVo> findUsedPage(Page<CouponInfo> pageParam, Long customerId);
+
+    Boolean receive(Long customerId, Long couponId);
 }

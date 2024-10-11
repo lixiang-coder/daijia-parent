@@ -12,4 +12,6 @@ public interface CouponService  {
     PageVo<NoUseCouponVo> findNoUsePage(Long customerId, Long page, Long limit);
 
     PageVo<UsedCouponVo> findUsedPage(Long customerId, Long page, Long limit);
+
+    Boolean receive(Long customerId, Long couponId);
 }

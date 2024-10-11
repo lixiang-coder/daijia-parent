@@ -81,5 +81,10 @@ public class CouponInfoController {
         return Result.ok(pageVo);
     }
 
+    @Operation(summary = "领取优惠券")
+    @GetMapping("/receive/{customerId}/{couponId}")
+    public Result<Boolean> receive(@PathVariable Long customerId, @PathVariable Long couponId) {
+        return Result.ok(couponInfoService.receive(customerId, couponId));
+    }
 }
 

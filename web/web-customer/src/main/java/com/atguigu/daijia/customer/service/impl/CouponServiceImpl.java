@@ -36,4 +36,10 @@ public class CouponServiceImpl implements CouponService {
     public PageVo<UsedCouponVo> findUsedPage(Long customerId, Long page, Long limit) {
         return couponFeignClient.findUsedPage(customerId, page, limit).getData();
     }
+
+    // 领取优惠券
+    @Override
+    public Boolean receive(Long customerId, Long couponId) {
+        return couponFeignClient.receive(customerId, couponId).getData();
+    }
 }

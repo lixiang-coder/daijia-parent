@@ -54,4 +54,14 @@ public interface CouponFeignClient {
             @PathVariable("customerId") Long customerId,
             @PathVariable("page") Long page,
             @PathVariable("limit") Long limit);
+
+    /**
+     * 领取优惠券
+     *
+     * @param customerId
+     * @param couponId
+     * @return
+     */
+    @GetMapping("/coupon/info/receive/{customerId}/{couponId}")
+    Result<Boolean> receive(@PathVariable("customerId") Long customerId, @PathVariable("couponId") Long couponId);
 }

@@ -21,4 +21,7 @@ public interface CouponInfoMapper extends BaseMapper<CouponInfo> {
 
     // 查询已使用优惠券分页列表
     IPage<UsedCouponVo> findUsedPage(Page<CouponInfo> pageParam, Long customerId);
+
+    // 更新领取数量
+    int updateReceiveCount(Long couponId);
 }

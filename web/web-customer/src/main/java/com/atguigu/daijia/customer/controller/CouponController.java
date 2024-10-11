@@ -67,5 +67,13 @@ public class CouponController {
         PageVo<UsedCouponVo> pageVo = couponService.findUsedPage(customerId, page, limit);
         return Result.ok(pageVo);
     }
+
+    @Operation(summary = "领取优惠券")
+    @XZYLogin
+    @GetMapping("/receive/{couponId}")
+    public Result<Boolean> receive(@PathVariable Long couponId) {
+        Long customerId = AuthContextHolder.getUserId();
+        return Result.ok(couponService.receive(customerId, couponId));
+    }
 }
 
